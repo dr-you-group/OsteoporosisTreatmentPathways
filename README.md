@@ -14,7 +14,6 @@
 
  As a chronic degenerative disease, osteoporosis requires a long-term treatment strategy. Recent guidelines emphasize that a sequential treatment strategy tailored to individual risk is a core component to effectively prevent fracture events. To provide further evidence to support the scheme in clinical practice, it is crucial to identify patterns of sequential therapy for osteoporosis in the real world. We aim to evaluate treatment patterns of osteoporosis medication in postmenopausal women using a common data model.
 
-## How To Run
 How to run
 ==========
 1. Follow [these instructions](https://ohdsi.github.io/Hades/rSetup.html) for seting up your R environment, including RTools and Java. 
