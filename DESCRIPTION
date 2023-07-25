@@ -1,0 +1,20 @@
+Package: ODTP
+Type: Package
+Title: Osteoporosis Drug Treatment Pathways Analysis
+Version: 0.1.0
+Author: Dajeong BOO
+Maintainer: DJBOO <djboo@yuhs.ac>
+Description: This package analyzes osteoporosis treatment pathways.
+Depends:
+    R(>= 4.2.0),
+    DatabaseConnector (>= 4.0.0)
+Imports:
+    dplyr,
+    plotly,
+    tidyr,
+    ggplot2,
+    SqlRender (>= 1.6.8)
+License: -
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
