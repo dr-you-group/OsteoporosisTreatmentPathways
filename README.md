@@ -61,7 +61,6 @@ How to run
             databaseName = databaseId,
             createCohorts = TRUE,
             runPrescriptionNum = TRUE,
-            runDUR = TRUE,
             runPathwayAnalysis = TRUE,
             resultsToZip = TRUE,
             yearStartDate = as.Date("2006-01-01"),
