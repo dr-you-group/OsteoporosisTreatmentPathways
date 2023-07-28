@@ -17,16 +17,18 @@ cdmDatabaseSchema <- ""
 cohortDatabaseSchema <- ""
 cohortTable <- ""
 
+# Some meta-information that will be used by the export function:
+databaseId <- "Synpuf"
+
 
 execute(connectionDetails,
         cdmDatabaseSchema,
         cohortDatabaseSchema,
         cohortTable,
         outputFolder,
-        databaseName = databaseName,
+        databaseName = databaseId,
         createCohorts = TRUE,
         runPrescriptionNum = TRUE,
-        runDUR = TRUE,
         runPathwayAnalysis = TRUE,
         resultsToZip = TRUE,
         yearStartDate = as.Date("2006-01-01"),
