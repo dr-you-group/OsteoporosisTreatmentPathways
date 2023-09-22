@@ -1,19 +1,27 @@
-atlasId,atlasName,cohortId,name,cohortType,range,ageLimit
-1,Osteoporosis (2012-2022),1,[ODTP] Osteoporosis,Target,,
-2,Osteoporosis (2012-2016),2,[ODTP] Osteoporosis_sub1,Target,,
-4,Osteoporosis (2017-2018),4,[ODTP] Osteoporosis_sub2,Target,,
-3,Osteoporosis (2019-2022),3,[ODTP] Osteoporosis_sub3,Target,,
-1001,bisphosphonate PO,1001,[ODTP] Bisphosphonate PO,Outcome,,
-1002,bisphosphonate IV,1002,[ODTP] Bisphosphonate_IV,Outcome,,
-1003,SERM,1003,[ODTP] SERM,Outcome,,
-1004,denosumab,1004,[ODTP] Denosumab,Outcome,,
-1005,rhPTH,1005,[ODTP] rhPTH,Outcome,,
-1006,Romosozumab,1006,[ODTP] Romosozumab,Outcome,,
-2001,bisphosphonate PO,2001,[ODTP] Bisphosphonate PO_DRUG,DRUG,,
-2002,bisphosphonate IV,2002,[ODTP] Bisphosphonate_IV_DRUG,DRUG,,
-2003,SERM,2003,[ODTP] SERM_DRUG,DRUG,,
-2004,denosumab,2004,[ODTP] Denosumab_DRUG,DRUG,,
-2005,rhPTH,2005,[ODTP] rhPTH_DRUG,DRUG,,
-3001,New users of Bisphosphonate as first line therapy,3001,[ODTP] New users of Bisphosphonate as first line therapy,Target,,
-3002,New users of Denosumab as first line therapy,3002,[ODTP] New users of Denosumab as first line therapy,Target,,
-3003,Osteoporotic fracture,3003,[ODTP] Osteoporotic fracture,Outcome,,
+atlasId,atlasName,cohortId,name,cohortType,StartYear
+1,Osteoporosis (2012-2021),1,[ODTP] Osteoporosis,P_Target,
+2,Osteoporosis (2012),2,[ODTP] Osteoporosis_sub,P_Target,2012
+3,Osteoporosis (2013),3,[ODTP] Osteoporosis_sub,P_Target,2013
+4,Osteoporosis (2014),4,[ODTP] Osteoporosis_sub,P_Target,2014
+5,Osteoporosis (2015),5,[ODTP] Osteoporosis_sub,P_Target,2015
+6,Osteoporosis (2016),6,[ODTP] Osteoporosis_sub,P_Target,2016
+7,Osteoporosis (2017),7,[ODTP] Osteoporosis_sub,P_Target,2017
+8,Osteoporosis (2018),8,[ODTP] Osteoporosis_sub,P_Target,2018
+9,Osteoporosis (2019),9,[ODTP] Osteoporosis_sub,P_Target,2019
+10,Osteoporosis (2020),10,[ODTP] Osteoporosis_sub,P_Target,2020
+11,Osteoporosis (2021),11,[ODTP] Osteoporosis_sub,P_Target,2021
+1001,bisphosphonate PO,1001,[ODTP] Bisphosphonate PO,P_Outcome,
+1002,bisphosphonate IV,1002,[ODTP] Bisphosphonate_IV,P_Outcome,
+1003,SERM,1003,[ODTP] SERM,P_Outcome,
+1004,denosumab,1004,[ODTP] Denosumab,P_Outcome,
+1005,rhPTH,1005,[ODTP] rhPTH,P_Outcome,
+1006,Romosozumab,1006,[ODTP] Romosozumab,P_Outcome,
+2001,bisphosphonate PO,2001,[ODTP] Bisphosphonate PO_DRUG,DRUG,
+2002,bisphosphonate IV,2002,[ODTP] Bisphosphonate_IV_DRUG,DRUG,
+2003,SERM,2003,[ODTP] SERM_DRUG,DRUG,
+2004,denosumab,2004,[ODTP] Denosumab_DRUG,DRUG,
+2005,rhPTH,2005,[ODTP] rhPTH_DRUG,DRUG,
+2006,Romosozumab,2006,[ODTP] Romosozumab_DRUG,DRUG,
+3001,New users of Bisphosphonate as first line therapy,3001,[ODTP] New users of Bisphosphonate as first line therapy,E_Target,
+3002,New users of Denosumab as first line therapy,3002,[ODTP] New users of Denosumab as first line therapy,E_Target,
+3003,Osteoporotic fracture,3003,[ODTP] Osteoporotic fracture,E_Outcome,

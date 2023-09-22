@@ -30,3 +30,35 @@ code,name,is_combo
 29,Bisphosphonate PO+Bisphosphonate IV+SERM+rhPTH,1
 30,Bisphosphonate PO+Bisphosphonate IV+SERM+Denosumab,1
 31,Bisphosphonate PO+Bisphosphonate IV+SERM+rhPTH+Denosumab,1
+32,Romosozumab,0
+33,Romosozumab+rhPTH,1
+34,Romosozumab+Denosumab,1
+35,Romosozumab+rhPTH+Denosumab,1
+36,Romosozumab+SERM,1
+37,Romosozumab+SERM+rhPTH,1
+38,Romosozumab+SERM+Denosumab,1
+39,Romosozumab+SERM+rhPTH+Denosumab,1
+40,Romosozumab+Bisphosphonate IV,1
+41,Romosozumab+Bisphosphonate IV+rhPTH,1
+42,Romosozumab+Bisphosphonate IV+Denosumab,1
+43,Romosozumab+Bisphosphonate IV+rhPTH+Denosumab,1
+44,Romosozumab+Bisphosphonate IV+SERM,1
+45,Romosozumab+Bisphosphonate IV+SERM+rhPTH,1
+46,Romosozumab+Bisphosphonate IV+SERM+Denosumab,1
+47,Romosozumab+Bisphosphonate IV+SERM+rhPTH+Denosumab,1
+48,Romosozumab+Bisphosphonate PO,1
+49,Romosozumab+Bisphosphonate PO+rhPTH,1
+50,Romosozumab+Bisphosphonate PO+Denosumab,1
+51,Romosozumab+Bisphosphonate PO+rhPTH+Denosumab,1
+52,Romosozumab+Bisphosphonate PO+SERM,1
+53,Romosozumab+Bisphosphonate PO+SERM+rhPTH,1
+54,Romosozumab+Bisphosphonate PO+SERM+Denosumab,1
+55,Romosozumab+Bisphosphonate PO+SERM+rhPTH+Denosumab,1
+56,Romosozumab+Bisphosphonate PO+Bisphosphonate IV,1
+57,Romosozumab+Bisphosphonate PO+Bisphosphonate IV+rhPTH,1
+58,Romosozumab+Bisphosphonate PO+Bisphosphonate IV+Denosumab,1
+59,Romosozumab+Bisphosphonate PO+Bisphosphonate IV+rhPTH+Denosumab,1
+60,Romosozumab+Bisphosphonate PO+Bisphosphonate IV+SERM,1
+61,Romosozumab+Bisphosphonate PO+Bisphosphonate IV+SERM+rhPTH,1
+62,Romosozumab+Bisphosphonate PO+Bisphosphonate IV+SERM+Denosumab,1
+63,Romosozumab+Bisphosphonate PO+Bisphosphonate IV+SERM+rhPTH+Denosumab,1

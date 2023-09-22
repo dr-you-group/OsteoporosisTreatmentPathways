@@ -31,22 +31,7 @@
 #' @param yearEndDate          End date of observation period, has to be on or earlier than the latest date in the database
 #' @param monthStartDate       Start date for monthly prescription numbers, has to be on or later than 2006-01-01
 #' @param monthEndDate         End date for monthly prescription numbers, has to on or earlier than the latest date in the database
-#'
-#' @examples
-#' \dontrun{
-#' connectionDetails <- createConnectionDetails(dbms = "redshift",
-#'                                              user = "joe",
-#'                                              password = "secret",
-#'                                              server = "myserver")
-#'
-#' execute(connectionDetails,
-#'         cdmDatabaseSchema = "cdm_data",
-#'         cohortDatabaseSchema = "study_results",
-#'         cohortTable = "cohort",
-#'         outputFolder = "c:/temp/study_results")
-#' }
-#'
-#' @export
+
 execute <- function(connectionDetails,
                     cdmDatabaseSchema,
                     cohortDatabaseSchema,
@@ -55,8 +40,8 @@ execute <- function(connectionDetails,
                     databaseName = "Unknown",
                     createCohorts = TRUE,
                     runPrescriptionNum = TRUE,
-                    runDUR = TRUE,
                     runPathwayAnalysis = TRUE,
+                    runCohortMethod = TRUE,
                     resultsToZip = TRUE,
                     yearStartDate = as.Date("2006-01-01"),
                     yearEndDate = as.Date("2022-12-31"),
@@ -100,7 +85,16 @@ execute <- function(connectionDetails,
                        cohortTable,
                        databaseName = databaseName,
                        outputFolder)
-    }
+  }
+
+  if (runCohortMethod) {
+    runCohortMethod(connectionDetails,
+                    cdmDatabaseSchema,
+                    cohortDatabaseSchema,
+                    cohortTable,
+                    oracleTempSchema,
+                    outputFolder)
+  }
   if (resultsToZip) {
     saveZipfile(databaseName,
                 outputFolder)

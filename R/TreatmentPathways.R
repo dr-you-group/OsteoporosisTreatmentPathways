@@ -3,7 +3,7 @@
 #' @description
 #' Run the treatment pathways analysis code
 #' @param connectionDetails    An object of type \code{connectionDetails} as created using the
-#'                             \code{\link[DatabaseConnector]{createConnectionDetails}} function in the
+#'                             \code{\link[DatabaseConnector]{createconnectionDetails}} function in the
 #'                             DatabaseConnector package.
 #' @param cohortDatabaseSchema Schema name where intermediate data can be stored. You will need to have
 #'                             write priviliges in this schema. Note that for SQL Server, this should
@@ -29,29 +29,22 @@ runPathwayAnalysis <- function(connectionDetails,
     dir.create(tpOutputFolder)
   }
 
-  conn <- DatabaseConnector::connect(connectionDetails)
+  connection <- DatabaseConnector::connect(connectionDetails)
 
   # Create treatment pathway table structure:
   sql <- SqlRender::readSql(file.path(getwd(),"inst/sql/CreatePathwaysTable.sql"))
   sql <- SqlRender::render(sql = sql,
                            cohortDatabaseSchema=cohortDatabaseSchema,
                            cohortTable=cohortTable)
-  DatabaseConnector::executeSql(connection = conn, sql = sql, progressBar = TRUE)
+  DatabaseConnector::executeSql(connection = connection, sql = sql, progressBar = TRUE)
 
   # Create treatment pathway code table:
   codeTable <- read.csv(file.path(getwd(), "inst/settings/PathwayAnalysisCodes.csv"))
-  DatabaseConnector::insertTable(connection = conn,
-                                 databaseSchema = cohortDatabaseSchema,
-                                 tableName = paste0(cohortTable, "_Osteoporosis_pathway_analysis_code"),
-                                 data = codeTable,
-                                 dropTableIfExists = TRUE,
-                                 createTable = TRUE,
-                                 progressBar = TRUE)
 
   # Instantiate analysis:
   ParallelLogger::logInfo("Running treatment pathway analysis")
   cohortsToCreate <- read.csv(file.path("inst", "settings", "CohortsToCreate.csv"))
-  cohortsToCreate <- cohortsToCreate[cohortsToCreate$cohortType=='Target',]
+  cohortsToCreate <- cohortsToCreate[cohortsToCreate$cohortType=='P_Target',]
   pathway_results <- data.frame()
   for (id in cohortsToCreate$cohortId){
     ParallelLogger::logInfo(paste0("Execute pathways :", cohortsToCreate[cohortsToCreate$cohortId==id,]$atlasName))
@@ -61,23 +54,71 @@ runPathwayAnalysis <- function(connectionDetails,
                                 generationId=id,
                                 cohortDatabaseSchema=cohortDatabaseSchema,
                                 cohortTable=cohortTable)
-    DatabaseConnector::executeSql(connection = conn, sql = excSql, progressBar = TRUE)
+    DatabaseConnector::executeSql(connection = connection, sql = excSql, progressBar = TRUE)
 
-    resultSql <- paste("select pathway_analysis_generation_id, target_cohort_id, t2.name as 'step_1', t3.name as 'step_2', t4.name as 'step_3', t1.count_value",
-                       "from @cohortDatabaseSchema.@cohortTable_Osteoporosis_pathway_analysis_paths t1,",
-                       "@cohortDatabaseSchema.@cohortTable_Osteoporosis_pathway_analysis_code t2,",
-                       "@cohortDatabaseSchema.@cohortTable_Osteoporosis_pathway_analysis_code t3,",
-                       "@cohortDatabaseSchema.@cohortTable_Osteoporosis_pathway_analysis_code t4",
-                       "where pathway_analysis_generation_id=@generationId",
-                       "and t1.step_1=t2.code and t1.step_2=t3.code and t1.step_3=t4.code;")
+    resultSql <- paste("select *",
+                       "from @cohortDatabaseSchema.@cohortTable_Osteoporosis_pathway_analysis_paths t1",
+                       "where pathway_analysis_generation_id=@generationId;")
     resultSql <- SqlRender::render(sql = resultSql,
                                    generationId=id,
                                    cohortDatabaseSchema=cohortDatabaseSchema,
                                    cohortTable=cohortTable)
-    result <- DatabaseConnector::querySql(connection = conn, sql = resultSql)
+    result <- DatabaseConnector::querySql(connection = connection, sql = resultSql)
     pathway_results <- rbind(pathway_results, result)
   }
 
+  pathway_results <- pathway_results %>%
+    left_join(codeTable, by=c("STEP_1"="code")) %>% mutate(STEP_1=name) %>% select(PATHWAY_ANALYSIS_GENERATION_ID, TARGET_COHORT_ID, STEP_1, STEP_2, STEP_3, COUNT_VALUE) %>%
+    left_join(codeTable, by=c("STEP_2"="code")) %>% mutate(STEP_2=name) %>% select(PATHWAY_ANALYSIS_GENERATION_ID, TARGET_COHORT_ID, STEP_1, STEP_2, STEP_3, COUNT_VALUE)  %>%
+    left_join(codeTable, by=c("STEP_3"="code")) %>% mutate(STEP_3=name) %>% select(PATHWAY_ANALYSIS_GENERATION_ID, TARGET_COHORT_ID, STEP_1, STEP_2, STEP_3, COUNT_VALUE)
+
   write.csv(x = pathway_results, file = file.path(tpOutputFolder, "pathways.csv"))
 
+  # RULE1) There is no combination treatment!
+  cleaned_pathway_results <- pathway_results %>%
+    mutate(
+      STEP_1=ifelse(grepl("\\+", STEP_1),
+                    ifelse(stringr::str_detect(STEP_1, fixed(STEP_2))&!is.na(STEP_2), stringr::str_replace(gsub("\\+", "", STEP_1), fixed(STEP_2), ""), STEP_1), STEP_1),
+      STEP_2=ifelse(grepl("\\+", STEP_2),
+                    ifelse(stringr::str_detect(STEP_2, fixed(STEP_1)), stringr::str_replace(gsub("\\+", "", STEP_2), fixed(STEP_1),""),
+                           ifelse(stringr::str_detect(STEP_2, fixed(STEP_3)) & !is.na(STEP_3), stringr::str_replace(gsub("\\+", "", STEP_2), fixed(STEP_3), ""), STEP_2)), STEP_2),
+      STEP_3=ifelse(grepl("\\+", STEP_3),
+                    ifelse(stringr::str_detect(STEP_3, fixed(STEP_2))&!is.na(STEP_2), stringr::str_replace(gsub("\\+", "", STEP_3), fixed(STEP_2), ""), STEP_3), STEP_3),
+      STEP_2=ifelse(STEP_1==STEP_2, NA, STEP_2),
+      STEP_3=ifelse(STEP_2==STEP_3, NA, STEP_3)) %>%
+    group_by(PATHWAY_ANALYSIS_GENERATION_ID, TARGET_COHORT_ID, STEP_1, STEP_2, STEP_3) %>%
+    reframe(personCount=sum(COUNT_VALUE)) %>%
+    as.data.frame()
+  write.csv(x=cleaned_pathway_results, file = file.path(tpOutputFolder, "cleaned_pathway.csv"))
+
+
+  # Create sequential treatment table:
+  ParallelLogger::logInfo("Creating Sequential Treatment Table")
+  sql <- SqlRender::readSql(file.path(getwd(),"inst/sql/createSequentialTreatmentTable.sql"))
+  sql <- SqlRender::render(sql = sql,
+                           cdmDatabaseSchema=cdmDatabaseSchema,
+                           cohortDatabaseSchema=cohortDatabaseSchema,
+                           cohortTable=cohortTable)
+  DatabaseConnector::executeSql(connection = connection, sql = sql, progressBar = TRUE)
+
+  base.sql <- "select * from @cohortDatabaseSchema.@cohortTable_PRESCRIPTION_EVENTS where line = 0;"
+  base.sql <- SqlRender::render(sql = base.sql,
+                                cohortDatabaseSchema=cohortDatabaseSchema,
+                                cohortTable=cohortTable)
+  base_data <- DatabaseConnector::querySql(connection = connection, sql = base.sql)
+  saveRDS(base_data, file.path(outputFolder, "tmpData/PrescriptionEvents_Whole.RDS"))
+
+  base.sql <- "select * from @cohortDatabaseSchema.@cohortTable_PRESCRIPTION_EVENTS where line != 0;"
+  base.sql <- SqlRender::render(sql = base.sql,
+                                cohortDatabaseSchema=cohortDatabaseSchema,
+                                cohortTable=cohortTable)
+  base_data <- DatabaseConnector::querySql(connection = connection, sql = base.sql)
+  saveRDS(base_data, file.path(outputFolder, "tmpData/PrescriptionEvents_line.RDS"))
+
+  # Extract Sub Results
+  extractSubResults(connectionDetails,
+                    cdmDatabaseSchema,
+                    cohortDatabaseSchema,
+                    cohortTable,
+                    outputFolder=outputFolder)
 }

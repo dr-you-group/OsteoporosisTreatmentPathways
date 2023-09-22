@@ -1,8 +1,5 @@
 library(ODTP)
 
-# The folder where the study intermediate and result files will be written:
-outputFolder <- "outputFolder"
-
 # Details for connecting to the server:
 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "pdw",
                                                                 server = Sys.getenv("PDW_SERVER"),
@@ -16,9 +13,16 @@ cdmDatabaseSchema <- ""
 # The name of the database schema and table where the study-specific cohorts will be instantiated:
 cohortDatabaseSchema <- ""
 cohortTable <- ""
+oracleTempSchema <- NULL
 
 # Some meta-information that will be used by the export function:
 databaseId <- "Synpuf"
+maxCores <- parallel::detectCores()
+StartDate <- "2006-01-01" # The start date of CDM-transformation
+EndDate <- "2023-12-12" # The end date of CDM-transformation
+
+# The folder where the study intermediate and result files will be written:
+outputFolder <- paste0("/home/user/result/output_", databaseId)
 
 
 execute(connectionDetails,
@@ -30,8 +34,9 @@ execute(connectionDetails,
         createCohorts = TRUE,
         runPrescriptionNum = TRUE,
         runPathwayAnalysis = TRUE,
+        runCohortMethod = TRUE,
         resultsToZip = TRUE,
-        yearStartDate = as.Date("2006-01-01"),
-        yearEndDate = as.Date("2022-12-31"),
-        monthStartDate = as.Date("2006-01-01"),
-        monthEndDate = as.Date("2022-12-31"))
+        yearStartDate = StartDate,
+        yearEndDate = EndDate,
+        monthStartDate = StartDate,
+        monthEndDate = EndDate)

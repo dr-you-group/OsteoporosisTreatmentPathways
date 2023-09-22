@@ -6,13 +6,17 @@ Author: Dajeong BOO
 Maintainer: DJBOO <djboo@yuhs.ac>
 Description: This package analyzes osteoporosis treatment pathways.
 Depends:
-    R(>= 4.2.0),
-    DatabaseConnector (>= 4.0.0)
+    R (>= 4.2.0),
+    DatabaseConnector (>= 4.0.0),
+    CohortMethod (>= 4.0.0),
+    tidyr,
+    stringr
 Imports:
     dplyr,
     plotly,
     tidyr,
     ggplot2,
+    stringr,
     SqlRender (>= 1.6.8)
 License: -
 Encoding: UTF-8

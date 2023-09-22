@@ -20,15 +20,11 @@ How to run
 
    **R version 4.2 is required to run this package.**
 
-3. Open your study package in RStudio. Use the following code to install all the dependencies:
+2. Open your study package in RStudio. 
 
-	```r
-	renv::restore()
-	```
+3. In RStudio, select 'Build' then 'Install and Restart' to build the package.
 
-4. In RStudio, select 'Build' then 'Install and Restart' to build the package.
-
-3. Once installed, you can execute the study by modifying and using the code below. For your convenience, this code is also provided under `extras/CodeToRun.R`:
+4. Once installed, you can execute the study by modifying and using the code below. For your convenience, this code is also provided under `extras/CodeToRun.R`:
 
 	```r
     library(ODTP)
@@ -68,4 +64,4 @@ How to run
             monthStartDate = as.Date("2006-01-01"),
             monthEndDate = as.Date("2022-12-31"))
     ```
-4. Send the zip file ```<DatabaseId>_results.zip``` in the output folder to the study coordinator.
+5. Send the zip file ```<DatabaseId>_results.zip``` in the output folder to the study coordinator.
