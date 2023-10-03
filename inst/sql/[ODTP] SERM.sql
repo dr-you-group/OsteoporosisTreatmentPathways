@@ -29,11 +29,11 @@ WHERE E.concept_id is null
 ) C UNION ALL 
 SELECT 1 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
 ( 
-  select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (44814411,44506575)
+  select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (44814411,44506575,42949553,2060008)
 UNION  select c.concept_id
   from @vocabulary_database_schema.CONCEPT c
   join @vocabulary_database_schema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (44814411,44506575)
+  and ca.ancestor_concept_id in (44814411,44506575,42949553,2060008)
   and c.invalid_reason is null
 
 ) I

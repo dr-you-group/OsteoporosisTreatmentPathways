@@ -51,11 +51,11 @@ UNION  select c.concept_id
 ) C UNION ALL 
 SELECT 3 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
 ( 
-  select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (40173605,40174493)
+  select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (40173605,40174493,19123238,21104349)
 UNION  select c.concept_id
   from @vocabulary_database_schema.CONCEPT c
   join @vocabulary_database_schema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (40173605,40174493)
+  and ca.ancestor_concept_id in (40173605,40174493,19123238,21104349)
   and c.invalid_reason is null
 
 ) I
@@ -84,11 +84,11 @@ UNION  select c.concept_id
 ) C UNION ALL 
 SELECT 6 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
 ( 
-  select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (40174359,19126449,40173589,40173601,40174497,40174363,40174485,40173605,40174493)
+  select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (40174359,19126449,40173589,40173601,40174497,40174363,40174485,40173605,40174493,19123238,21104349)
 UNION  select c.concept_id
   from @vocabulary_database_schema.CONCEPT c
   join @vocabulary_database_schema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (40174359,19126449,40173589,40173601,40174497,40174363,40174485,40173605,40174493)
+  and ca.ancestor_concept_id in (40174359,19126449,40173589,40173601,40174497,40174363,40174485,40173605,40174493,19123238,21104349)
   and c.invalid_reason is null
 
 ) I

@@ -50,17 +50,6 @@ SELECT 2 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
   and c.invalid_reason is null
 
 ) I
-) C UNION ALL 
-SELECT 3 as codeset_id, c.concept_id FROM (select distinct I.concept_id FROM
-( 
-  select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (21133959)
-UNION  select c.concept_id
-  from @vocabulary_database_schema.CONCEPT c
-  join @vocabulary_database_schema.CONCEPT_ANCESTOR ca on c.concept_id = ca.descendant_concept_id
-  and ca.ancestor_concept_id in (21133959)
-  and c.invalid_reason is null
-
-) I
 ) C
 ;
 
@@ -77,11 +66,6 @@ union all
   select de.*, 365 as 'duration'
   FROM @cdm_database_schema.DRUG_EXPOSURE de
   JOIN #Codesets codesets on ((de.drug_concept_id = codesets.concept_id and codesets.codeset_id = 2)) 
-  WHERE days_supply >= 1
-union all
-  select de.*, 30 as 'duration'
-  FROM @cdm_database_schema.DRUG_EXPOSURE de
-  JOIN #Codesets codesets on ((de.drug_concept_id = codesets.concept_id and codesets.codeset_id = 3)) 
   WHERE days_supply >= 1
   ) d;
 
