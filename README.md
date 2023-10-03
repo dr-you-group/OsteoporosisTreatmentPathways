@@ -47,21 +47,26 @@ How to run
     cohortTable <- ""
 
     # Some meta-information that will be used by the export function:
-    databaseId <- "Synpuf"
+    ddatabaseId <- "Synpuf"
+    maxCores <- parallel::detectCores()
+    StartDate <- "2006-01-01" # The start date of CDM-transformation
+    EndDate <- "2023-12-12" # The end date of CDM-transformation
 
     execute(connectionDetails,
-            cdmDatabaseSchema,
-            cohortDatabaseSchema,
-            cohortTable,
-            outputFolder,
-            databaseName = databaseId,
-            createCohorts = TRUE,
-            runPrescriptionNum = TRUE,
-            runPathwayAnalysis = TRUE,
-            resultsToZip = TRUE,
-            yearStartDate = as.Date("2006-01-01"),
-            yearEndDate = as.Date("2022-12-31"),
-            monthStartDate = as.Date("2006-01-01"),
-            monthEndDate = as.Date("2022-12-31"))
+        cdmDatabaseSchema,
+        cohortDatabaseSchema,
+        cohortTable,
+        outputFolder,
+        databaseName = databaseId,
+        createCohorts = TRUE,
+        runPrescriptionNum = TRUE,
+        runPathwayAnalysis = TRUE,
+        runCohortMethod = TRUE,
+        resultsToZip = TRUE,
+        yearStartDate = StartDate,
+        yearEndDate = EndDate,
+        monthStartDate = StartDate,
+        monthEndDate = EndDate)
+
     ```
 5. Send the zip file ```<DatabaseId>_results.zip``` in the output folder to the study coordinator.
