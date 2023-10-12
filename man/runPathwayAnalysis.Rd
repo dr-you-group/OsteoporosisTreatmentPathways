@@ -14,7 +14,7 @@ runPathwayAnalysis(
 }
 \arguments{
 \item{connectionDetails}{An object of type \code{connectionDetails} as created using the
-\code{\link[DatabaseConnector]{createConnectionDetails}} function in the
+\code{\link[DatabaseConnector]{createconnectionDetails}} function in the
 DatabaseConnector package.}
 
 \item{cohortDatabaseSchema}{Schema name where intermediate data can be stored. You will need to have

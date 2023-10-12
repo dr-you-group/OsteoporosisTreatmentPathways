@@ -24,7 +24,7 @@ runPathwayAnalysis <- function(connectionDetails,
                                databaseName,
                                outputFolder){
 
-  tpOutputFolder <- file.path(outputFolder, "results")
+  tpOutputFolder <- file.path(outputFolder, "results/TreatmentPathways")
   if (!file.exists(tpOutputFolder)){
     dir.create(tpOutputFolder)
   }
@@ -32,11 +32,13 @@ runPathwayAnalysis <- function(connectionDetails,
   connection <- DatabaseConnector::connect(connectionDetails)
 
   # Create treatment pathway table structure:
-  sql <- SqlRender::readSql(file.path(getwd(),"inst/sql/CreatePathwaysTable.sql"))
-  sql <- SqlRender::render(sql = sql,
-                           cohortDatabaseSchema=cohortDatabaseSchema,
-                           cohortTable=cohortTable)
-  DatabaseConnector::executeSql(connection = connection, sql = sql, progressBar = TRUE)
+  sql <- SqlRender::loadRenderTranslateSql("CreatePathwaysTable.sql",
+                                           "ODTP4HIRA",
+                                           dbms = connectionDetails$dbms,
+                                           oracleTempSchema = oracleTempSchema,
+                                           cohortDatabaseSchema = cohortDatabaseSchema,
+                                           cohortTable = cohortTable)
+  DatabaseConnector::executeSql(connection=connection, sql=sql)
 
   # Create treatment pathway code table:
   codeTable <- read.csv(file.path(getwd(), "inst/settings/PathwayAnalysisCodes.csv"))
@@ -48,12 +50,14 @@ runPathwayAnalysis <- function(connectionDetails,
   pathway_results <- data.frame()
   for (id in cohortsToCreate$cohortId){
     ParallelLogger::logInfo(paste0("Execute pathways :", cohortsToCreate[cohortsToCreate$cohortId==id,]$atlasName))
-    excSql <- SqlRender::readSql(file.path(getwd(),"inst/sql/TreatmentPathways.sql"))
-    excSql <- SqlRender::render(sql = excSql,
-                                cohortId=id,
-                                generationId=id,
-                                cohortDatabaseSchema=cohortDatabaseSchema,
-                                cohortTable=cohortTable)
+    excSql <- SqlRender::loadRenderTranslateSql("TreatmentPathways.sql",
+                                                "ODTP4HIRA",
+                                                dbms = connectionDetails$dbms,
+                                                oracleTempSchema = oracleTempSchema,
+                                                cohortDatabaseSchema = cohortDatabaseSchema,
+                                                cohortTable = cohortTable,
+                                                cohortId = id,
+                                                generationId=id)
     DatabaseConnector::executeSql(connection = connection, sql = excSql, progressBar = TRUE)
 
     resultSql <- paste("select *",
@@ -78,12 +82,12 @@ runPathwayAnalysis <- function(connectionDetails,
   cleaned_pathway_results <- pathway_results %>%
     mutate(
       STEP_1=ifelse(grepl("\\+", STEP_1),
-                    ifelse(stringr::str_detect(STEP_1, fixed(STEP_2))&!is.na(STEP_2), stringr::str_replace(gsub("\\+", "", STEP_1), fixed(STEP_2), ""), STEP_1), STEP_1),
+                    ifelse(stringr::str_detect(STEP_1, stringr::fixed(STEP_2))&!is.na(STEP_2), stringr::str_replace(gsub("\\+", "", STEP_1), stringr::fixed(STEP_2), ""), STEP_1), STEP_1),
       STEP_2=ifelse(grepl("\\+", STEP_2),
-                    ifelse(stringr::str_detect(STEP_2, fixed(STEP_1)), stringr::str_replace(gsub("\\+", "", STEP_2), fixed(STEP_1),""),
-                           ifelse(stringr::str_detect(STEP_2, fixed(STEP_3)) & !is.na(STEP_3), stringr::str_replace(gsub("\\+", "", STEP_2), fixed(STEP_3), ""), STEP_2)), STEP_2),
+                    ifelse(stringr::str_detect(STEP_2, stringr::fixed(STEP_1)), stringr::str_replace(gsub("\\+", "", STEP_2), stringr::fixed(STEP_1),""),
+                           ifelse(stringr::str_detect(STEP_2, stringr::fixed(STEP_3)) & !is.na(STEP_3), stringr::str_replace(gsub("\\+", "", STEP_2), stringr::fixed(STEP_3), ""), STEP_2)), STEP_2),
       STEP_3=ifelse(grepl("\\+", STEP_3),
-                    ifelse(stringr::str_detect(STEP_3, fixed(STEP_2))&!is.na(STEP_2), stringr::str_replace(gsub("\\+", "", STEP_3), fixed(STEP_2), ""), STEP_3), STEP_3),
+                    ifelse(stringr::str_detect(STEP_3, stringr::fixed(STEP_2))&!is.na(STEP_2), stringr::str_replace(gsub("\\+", "", STEP_3), stringr::fixed(STEP_2), ""), STEP_3), STEP_3),
       STEP_2=ifelse(STEP_1==STEP_2, NA, STEP_2),
       STEP_3=ifelse(STEP_2==STEP_3, NA, STEP_3)) %>%
     group_by(PATHWAY_ANALYSIS_GENERATION_ID, TARGET_COHORT_ID, STEP_1, STEP_2, STEP_3) %>%
@@ -94,11 +98,13 @@ runPathwayAnalysis <- function(connectionDetails,
 
   # Create sequential treatment table:
   ParallelLogger::logInfo("Creating Sequential Treatment Table")
-  sql <- SqlRender::readSql(file.path(getwd(),"inst/sql/createSequentialTreatmentTable.sql"))
-  sql <- SqlRender::render(sql = sql,
-                           cdmDatabaseSchema=cdmDatabaseSchema,
-                           cohortDatabaseSchema=cohortDatabaseSchema,
-                           cohortTable=cohortTable)
+  sql <- SqlRender::loadRenderTranslateSql("createSequentialTreatmentTable.sql",
+                                           "ODTP4HIRA",
+                                           dbms = connectionDetails$dbms,
+                                           cdmDatabaseSchema=cdmDatabaseSchema,
+                                           oracleTempSchema = oracleTempSchema,
+                                           cohortDatabaseSchema = cohortDatabaseSchema,
+                                           cohortTable = cohortTable)
   DatabaseConnector::executeSql(connection = connection, sql = sql, progressBar = TRUE)
 
   base.sql <- "select * from @cohortDatabaseSchema.@cohortTable_PRESCRIPTION_EVENTS where line = 0;"
