@@ -18,7 +18,7 @@ How to run
 2. Open your study package in RStudio. Use the following code to install all the dependencies:
 
 	```r
-	renv::restore()
+	renv::deactivate()
 	```
 
 3. In RStudio, select 'Build' then 'Install and Restart' to build the package.
@@ -28,8 +28,8 @@ How to run
 	```r
 	library(ODTP4HIRA)
 	
-  # Optional: specify where the temporary files (used by the Andromeda package) will be created:
-  options(andromedaTempFolder = "c:/andromedaTemp")
+ 	 # Optional: specify where the temporary files (used by the Andromeda package) will be created:
+  	options(andromedaTempFolder = "c:/andromedaTemp")
 	
 	# Maximum number of cores to be used:
 	maxCores <- parallel::detectCores()
