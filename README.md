@@ -15,7 +15,7 @@ How to run
 ==========
 1. Follow [these instructions](https://ohdsi.github.io/Hades/rSetup.html) for seting up your R environment, including RTools and Java. 
 
-2. Open your study package in RStudio. (If you use docker image):
+2. Open your study package in RStudio. If you use Docker images, please execute `renv::deactivate()` :
 
 	```r
 	renv::deactivate()
