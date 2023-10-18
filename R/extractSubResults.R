@@ -369,8 +369,7 @@ extractSubResults <- function(connectionDetails,
   first_line_cohort <- first_line %>% select(COHORT_DEFINITION_ID, SUBJECT_ID, LINE_START_DATE, TREATMENT_END_DATE)
   colnames(first_line_cohort) <- c("COHORT_DEFINITION_ID", "SUBJECT_ID", "COHORT_START_DATE", "COHORT_END_DATE")
   DatabaseConnector::insertTable(connection = connection,
-                                 databaseSchema = cohortDatabaseSchema,
-                                 tableName = paste0(cohortTable, "_demographics"),
+                                 tableName = paste0(cohortDatabaseSchema, ".", cohortTable, "_demographics"),
                                  data = first_line_cohort,
                                  dropTableIfExists = TRUE,
                                  createTable = TRUE)
