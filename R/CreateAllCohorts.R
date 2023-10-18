@@ -138,7 +138,7 @@ createCohorts <- function(connectionDetails,
     sql <- "SELECT * FROM @cohort_database_schema.@cohort_table WHERE cohort_definition_id = @cohortId"
     sql <- SqlRender::render(sql,
                              cohort_database_schema = cohortDatabaseSchema,
-                             cohort_table = cohortTable,
+                             cohort_table = paste0(cohortTable, "_DRUG"),
                              cohortId = i)
     sql <- SqlRender::translate(sql, targetDialect = attr(conn, "dbms"))
     data_drug <- DatabaseConnector::querySql(conn, sql)
