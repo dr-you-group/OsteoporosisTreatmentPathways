@@ -7,19 +7,19 @@
 execute(
   connectionDetails,
   cdmDatabaseSchema,
-  cohortDatabaseSchema,
-  cohortTable,
+  cohortDatabaseSchema = cdmDatabaseSchema,
+  cohortTable = "cohort",
+  oracleTempSchema = cohortDatabaseSchema,
   outputFolder,
+  databaseId = "Unknown",
   databaseName = "Unknown",
+  databaseDescription = "Unknown",
   createCohorts = TRUE,
-  runPrescriptionNum = TRUE,
-  runDUR = TRUE,
-  runPathwayAnalysis = TRUE,
-  resultsToZip = TRUE,
-  yearStartDate = as.Date("2006-01-01"),
-  yearEndDate = as.Date("2022-12-31"),
-  monthStartDate = as.Date("2006-01-01"),
-  monthEndDate = as.Date("2022-12-31")
+  synthesizePositiveControls = TRUE,
+  runAnalyses = TRUE,
+  packageResults = TRUE,
+  maxCores = 4,
+  minCellCount = 5
 )
 }
 \arguments{
@@ -39,42 +39,47 @@ include both the database and schema name, for example 'cdm_data.dbo'.}
 This table will hold the exposure and outcome cohorts used in this
 study.}
 
+\item{oracleTempSchema}{Should be used in Oracle to specify a schema where the user has write
+priviliges for storing temporary tables.}
+
 \item{outputFolder}{Name of local folder to place results; make sure to use forward slashes
 (/). Do not use a folder on a network drive since this greatly impacts
 performance.}
 
-\item{databaseName}{The name of the database (e.g. 'SynPUFs').}
+\item{databaseId}{A short string for identifying the database (e.g.
+'Synpuf').}
+
+\item{databaseName}{The full name of the database (e.g. 'Medicare Claims
+Synthetic Public Use Files (SynPUFs)').}
+
+\item{databaseDescription}{A short description (several sentences) of the database.}
 
 \item{createCohorts}{Create the cohortTable table with the exposure and outcome cohorts?}
 
-\item{runPrescriptionNum}{Calculate the monthly prescription numbers?}
+\item{synthesizePositiveControls}{Should positive controls be synthesized?}
 
-\item{runDUR}{Calculate the monthly prescription numbers of DUR?}
+\item{runAnalyses}{Perform the cohort method analyses?}
 
-\item{runPathwayAnalysis}{Execute the treatment pathways analysis?}
+\item{packageResults}{Should results be packaged for later sharing?}
 
-\item{resultsToZip}{Create the zip files?}
+\item{maxCores}{How many parallel cores should be used? If more cores are made available
+this can speed up the analyses.}
 
-\item{yearStartDate}{Start date of observation period, has to be on or later than 2006-01-01}
-
-\item{yearEndDate}{End date of observation period, has to be on or earlier than the latest date in the database}
-
-\item{monthStartDate}{Start date for monthly prescription numbers, has to be on or later than 2006-01-01}
-
-\item{monthEndDate}{End date for monthly prescription numbers, has to on or earlier than the latest date in the database}
+\item{minCellCount}{The minimum number of subjects contributing to a count before it can be included 
+in packaged results.}
 }
 \description{
 Execute the Study
 }
 \details{
-This function executes the osteoporosis drug treatment pathways Study.
+This function executes the ODTP4HIRA Study.
 
-The \code{createCohorts}, \code{createAllCohorts}, \code{computePrescriptionNum} arguments
+The \code{createCohorts}, \code{synthesizePositiveControls}, \code{runAnalyses}, and \code{runDiagnostics} arguments
 are intended to be used to run parts of the full study at a time, but none of the parts are considered to be optional.
 }
 \examples{
 \dontrun{
-connectionDetails <- createConnectionDetails(dbms = "redshift",
+connectionDetails <- createConnectionDetails(dbms = "postgresql",
                                              user = "joe",
                                              password = "secret",
                                              server = "myserver")
@@ -83,7 +88,9 @@ execute(connectionDetails,
         cdmDatabaseSchema = "cdm_data",
         cohortDatabaseSchema = "study_results",
         cohortTable = "cohort",
-        outputFolder = "c:/temp/study_results")
+        oracleTempSchema = NULL,
+        outputFolder = "c:/temp/study_results",
+        maxCores = 4)
 }
 
 }

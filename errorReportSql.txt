@@ -1,0 +1,31 @@
+DBMS:
+sql server
+
+Error:
+com.microsoft.sqlserver.jdbc.SQLServerException: 여러 부분으로 구성된 식별자 "d.drug_concept_id"은(는) 바인딩할 수 없습니다.
+
+SQL:
+INSERT INTO COHORTDB.DJBOO.TEST1017_A_DRUG (cohort_definition_id, subject_id, drug_concept_id, cohort_start_date, cohort_end_date, days_supply, duration)
+select 2006 as cohort_definition_id, de.person_id, de.drug_concept_id, de.drug_exposure_start_date, de.drug_exposure_end_date,  datediff(day, de.drug_exposure_start_date, de.drug_exposure_end_date)+1 as 'days_supply', 30 as 'duration'
+FROM CDM_v531_YUHS.CDM.DRUG_EXPOSURE de
+JOIN #Codesets codesets on ((d.drug_concept_id = codesets.concept_id and codesets.codeset_id = 1))
+WHERE datediff(day, de.drug_exposure_start_date, de.drug_exposure_end_date)+1 >=1
+
+R version:
+R version 4.2.2 (2022-10-31 ucrt)
+
+Platform:
+x86_64-w64-mingw32
+
+Attached base packages:
+- stats
+- graphics
+- grDevices
+- utils
+- datasets
+- methods
+- base
+
+Other attached packages:
+- ODTP (0.0.1)
+- DatabaseConnector (6.0.0)

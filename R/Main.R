@@ -1,9 +1,25 @@
+# Copyright 2020 Observational Health Data Sciences and Informatics
+#
+# This file is part of ODTP4HIRA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 #' Execute the Study
 #'
 #' @details
-#' This function executes the osteoporosis drug treatment pathways Study.
-#'
-#' The \code{createCohorts}, \code{createAllCohorts}, \code{computePrescriptionNum} arguments
+#' This function executes the ODTP4HIRA Study.
+#' 
+#' The \code{createCohorts}, \code{synthesizePositiveControls}, \code{runAnalyses}, and \code{runDiagnostics} arguments
 #' are intended to be used to run parts of the full study at a time, but none of the parts are considered to be optional.
 #'
 #' @param connectionDetails    An object of type \code{connectionDetails} as created using the
@@ -18,86 +34,138 @@
 #' @param cohortTable          The name of the table that will be created in the work database schema.
 #'                             This table will hold the exposure and outcome cohorts used in this
 #'                             study.
+#' @param oracleTempSchema     Should be used in Oracle to specify a schema where the user has write
+#'                             priviliges for storing temporary tables.
 #' @param outputFolder         Name of local folder to place results; make sure to use forward slashes
 #'                             (/). Do not use a folder on a network drive since this greatly impacts
 #'                             performance.
-#' @param databaseName         The name of the database (e.g. 'SynPUFs').
+#' @param databaseId           A short string for identifying the database (e.g.
+#'                             'Synpuf').
+#' @param databaseName         The full name of the database (e.g. 'Medicare Claims
+#'                             Synthetic Public Use Files (SynPUFs)').
+#' @param databaseDescription  A short description (several sentences) of the database.
 #' @param createCohorts        Create the cohortTable table with the exposure and outcome cohorts?
-#' @param runPrescriptionNum   Calculate the monthly prescription numbers?
-#' @param runDUR               Calculate the monthly prescription numbers of DUR?
-#' @param runPathwayAnalysis   Execute the treatment pathways analysis?
-#' @param resultsToZip         Create the zip files?
-#' @param yearStartDate        Start date of observation period, has to be on or later than 2006-01-01
-#' @param yearEndDate          End date of observation period, has to be on or earlier than the latest date in the database
-#' @param monthStartDate       Start date for monthly prescription numbers, has to be on or later than 2006-01-01
-#' @param monthEndDate         End date for monthly prescription numbers, has to on or earlier than the latest date in the database
-
+#' @param synthesizePositiveControls  Should positive controls be synthesized?
+#' @param runAnalyses          Perform the cohort method analyses?
+#' @param packageResults       Should results be packaged for later sharing?     
+#' @param maxCores             How many parallel cores should be used? If more cores are made available
+#'                             this can speed up the analyses.
+#' @param minCellCount         The minimum number of subjects contributing to a count before it can be included 
+#'                             in packaged results.
+#'
+#' @examples
+#' \dontrun{
+#' connectionDetails <- createConnectionDetails(dbms = "postgresql",
+#'                                              user = "joe",
+#'                                              password = "secret",
+#'                                              server = "myserver")
+#'
+#' execute(connectionDetails,
+#'         cdmDatabaseSchema = "cdm_data",
+#'         cohortDatabaseSchema = "study_results",
+#'         cohortTable = "cohort",
+#'         oracleTempSchema = NULL,
+#'         outputFolder = "c:/temp/study_results",
+#'         maxCores = 4)
+#' }
+#'
+#' @export
 execute <- function(connectionDetails,
                     cdmDatabaseSchema,
-                    cohortDatabaseSchema,
-                    cohortTable,
+                    cohortDatabaseSchema = cdmDatabaseSchema,
+                    cohortTable = "cohort",
+                    oracleTempSchema = cohortDatabaseSchema,
                     outputFolder,
+                    databaseId = "Unknown",
                     databaseName = "Unknown",
+                    databaseDescription = "Unknown",
+                    startDate = startDate,
+                    endDate = endDate,
                     createCohorts = TRUE,
-                    runPrescriptionNum = TRUE,
-                    runPathwayAnalysis = TRUE,
-                    runCohortMethod = TRUE,
-                    resultsToZip = TRUE,
-                    yearStartDate = as.Date("2006-01-01"),
-                    yearEndDate = as.Date("2022-12-31"),
-                    monthStartDate = as.Date("2006-01-01"),
-                    monthEndDate = as.Date("2022-12-31")) {
-
+                    synthesizePositiveControls = TRUE,
+                    runAnalyses = TRUE,
+                    packageResults = TRUE,
+                    maxCores = 4,
+                    minCellCount= 5) {
+  
   if (!file.exists(outputFolder))
     dir.create(outputFolder, recursive = TRUE)
-
   if (!file.exists(file.path(outputFolder, "results")))
     dir.create(file.path(outputFolder, "results"))
-
+  if (!file.exists(file.path(outputFolder, "results/TreatmentPathways")))
+    dir.create(file.path(outputFolder, "results/TreatmentPathways"))
+  if (!file.exists(file.path(outputFolder, "results/CohortMethod")))
+    dir.create(file.path(outputFolder, "results/CohortMethod"))
+  if (!file.exists(file.path(outputFolder, "tmpData")))
+    dir.create(file.path(outputFolder, "tmpData"))
+  
   ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
   ParallelLogger::addDefaultErrorReportLogger(file.path(outputFolder, "errorReportR.txt"))
   on.exit(ParallelLogger::unregisterLogger("DEFAULT_FILE_LOGGER", silent = TRUE))
   on.exit(ParallelLogger::unregisterLogger("DEFAULT_ERRORREPORT_LOGGER", silent = TRUE), add = TRUE)
-
-
+  
   if (createCohorts) {
-    ParallelLogger::logInfo("Creating Drug Cohort Table")
-    createAllCohorts(connectionDetails = connectionDetails,
-                     cdmDatabaseSchema = cdmDatabaseSchema,
-                     cohortDatabaseSchema = cohortDatabaseSchema,
-                     cohortTable = cohortTable,
-                     outputFolder = outputFolder,
-                     yearStartDate=yearStartDate,
-                     yearEndDate=yearEndDate)
+    ParallelLogger::logInfo("Creating exposure and outcome cohorts")
+    createCohorts(connectionDetails = connectionDetails,
+                  cdmDatabaseSchema = cdmDatabaseSchema,
+                  cohortDatabaseSchema = cohortDatabaseSchema,
+                  cohortTable = cohortTable,
+                  oracleTempSchema = oracleTempSchema,
+                  outputFolder = outputFolder,
+                  startDate = startDate,
+                  endDate = endDate)
   }
-
-
-  if (runPrescriptionNum) {
-    computePrescriptionNum(monthStartDate = monthStartDate,
-                           monthEndDate = monthEndDate,
-                           databaseName = databaseName,
-                           outputFolder = outputFolder)
+  
+  # Set doPositiveControlSynthesis to FALSE if you don't want to use synthetic positive controls:
+  doPositiveControlSynthesis = FALSE
+  if (doPositiveControlSynthesis) {
+    if (synthesizePositiveControls) {
+      ParallelLogger::logInfo("Synthesizing positive controls")
+      synthesizePositiveControls(connectionDetails = connectionDetails,
+                                 cdmDatabaseSchema = cdmDatabaseSchema,
+                                 cohortDatabaseSchema = cohortDatabaseSchema,
+                                 cohortTable = cohortTable,
+                                 oracleTempSchema = oracleTempSchema,
+                                 outputFolder = outputFolder,
+                                 maxCores = maxCores)
+    }
   }
-
-  if (runPathwayAnalysis) {
+  
+  if (runAnalyses) {
+    ParallelLogger::logInfo("Running Treatment Pathways analyses")
+    computePrescriptionNum(databaseName = databaseName,
+                           outputFolder = outputFolder,
+                           startDate = startDate,
+                           endDate = endDate)
+    
     runPathwayAnalysis(connectionDetails,
                        cohortDatabaseSchema,
                        cohortTable,
-                       databaseName = databaseName,
-                       outputFolder)
+                       databaseName,
+                       outputFolder,
+                       startDate = startDate,
+                       endDate = endDate)
+    
+    ParallelLogger::logInfo("Running CohortMethod analyses")
+    runCohortMethod(connectionDetails = connectionDetails,
+                    cdmDatabaseSchema = cdmDatabaseSchema,
+                    cohortDatabaseSchema = cohortDatabaseSchema,
+                    cohortTable = cohortTable,
+                    oracleTempSchema = oracleTempSchema,
+                    outputFolder = outputFolder,
+                    maxCores = maxCores)
   }
+  
+  if (packageResults) {
+    ParallelLogger::logInfo("Packaging results")
+    exportResults(outputFolder = outputFolder,
+                  databaseId = databaseId,
+                  databaseName = databaseId,
+                  databaseDescription = databaseId,
+                  minCellCount = minCellCount,
+                  maxCores = maxCores)
 
-  if (runCohortMethod) {
-    runCohortMethod(connectionDetails,
-                    cdmDatabaseSchema,
-                    cohortDatabaseSchema,
-                    cohortTable,
-                    oracleTempSchema,
-                    outputFolder)
   }
-  if (resultsToZip) {
-    saveZipfile(databaseName,
-                outputFolder)
-  }
+  
   invisible(NULL)
 }

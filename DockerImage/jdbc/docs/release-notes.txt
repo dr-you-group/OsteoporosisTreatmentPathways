@@ -1,0 +1,498 @@
+==============================================================================
+Magnitude Simba Apache Spark JDBC Data Connector Release Notes 
+==============================================================================
+
+The release notes provide details of enhancements, features, known issues, and
+workflow changes in Simba Apache Spark JDBC Connector 2.6.21.
+
+
+2.6.21 =======================================================================
+
+Released 2021-12-24
+
+Enhancements & New Features
+
+ * [SPARKJ-540] Updated log4j third-party libraries
+
+   The JDBC 4.2 version of the connector has been updated to version 2.17.0
+   of the log4j third-party libraries.
+
+   The JDBC 4.1 version of the connector has been updated to version 2.12.2
+   of the log4j third-party libraries. To address security vulnerabilities, do
+   one of the following: 
+   - In PatternLayout in the logging configuration, replace Context Lookups 
+     like ${ctx:loginId} or $${ctx:loginId} with Thread Context Map patterns 
+     (%X, %mdc, or %MDC). 
+   - Otherwise, in the configuration, remove references to Context Lookups 
+     like ${ctx:loginId} or $${ctx:loginId} where they originate from sources
+     external to the application such as HTTP headers or user input.
+
+ * [SPARKJ-532] Third-party library upgrade
+
+   The connector has been upgraded with the following third-party libraries:
+   - netty-buffer 4.1.72.Final (previously 4.1.65.Final)
+   - netty-common 4.1.72.Final (previously 4.1.65.Final)
+
+
+Resolved Issues
+The following issues have been resolved in Simba Apache Spark JDBC Connector 
+2.6.21.
+
+ * [SPARKJ-437] The http.header connection properties are not correctly sent 
+   to the server.
+
+ * [SPARKJ-519] In some cases, the connector incorrectly removes the word 
+   SPARK from the table name in a query.
+
+ * [SPARKJ-538] The catalog filter for GetFunctions() behaves inconsistently 
+   with previous releases.
+
+
+Known Issues 
+The following are known issues that you may encounter due to limitations in 
+the data source, the connector, or an application. 
+
+ * [SPARKJ-330] Issue with date and timestamp before the beginning of the 
+   Gregorian calendar when connecting to Spark 2.4.4 or later, or versions 
+   previous to 3.0, with Arrow result set serialization.
+ 
+   When using Spark 2.4.4 or later, or versions previous to Spark 3.0, DATE 
+   and TIMESTAMP data before October 15, 1582 may be returned incorrectly if 
+   the server supports serializing query results using Apache Arrow. This 
+   issue should not impact most distributions of Apache Spark.
+
+   To confirm if your distribution of Spark 2.4.4 or later has been impacted 
+   by this issue, you can execute the following query:
+
+   SELECT DATE '1581-10-14'
+
+   If the result returned by the connector is 1581-10-24, then you are 
+   impacted by the issue. In this case, if your data set contains date and/or
+   timestamp data earlier than October 15, 1582, you can work around this 
+   issue by adding EnableArrow=0 in your connection URL to disable the Arrow
+   result set serialization feature. 
+
+
+Workflow Changes =============================================================
+
+The following changes may disrupt established workflows for the connector. 
+
+2.6.21 -----------------------------------------------------------------------
+
+ * [SPARKJ-534] Renamed connection properties
+
+   Beginning with this release, the following connection properties have been 
+   renamed:
+   - ClusterAutostartRetry is now TemporarilyUnavailableRetry
+   - ClusterAutostartRetryTimeout is now TemporarilyUnavailableRetryTimeout
+
+
+2.6.19 -----------------------------------------------------------------------
+
+ * [SPARKJ-483] Removed third-party libraries
+
+   Beginning with this release, the connector no longer includes the ZooKeeper
+   and Jute libraries in the JAR file. 
+
+
+2.6.18 -----------------------------------------------------------------------
+
+ * [SPARKJ-296][SPARKJ-297] Removed support for 2.1
+
+   Beginning with this release, the connector no longer supports servers that
+   run Spark version 2.1. For information about the supported Spark versions,
+   see the Installation and Configuration Guide.
+
+ * [SPARKJ-288][SPARKJ-289] Removed support for JDBC 4.0 (Java 6)
+
+   Beginning with this release, the connector no longer supports JDBC 4.0 
+   (Java 6). For a list of supported JDBC versions, see the Installation and
+   Configuration Guide.
+
+
+2.6.11 -----------------------------------------------------------------------
+
+ * [SPARKJ-301] Removed support for Spark 2.0
+
+   Beginning with this release, the driver no longer supports servers that run
+   Spark version 2.0. For information about the supported Spark versions, see 
+   the Installation and Configuration Guide.
+
+ * [SPARKJ-296][SPARKJ-298] Deprecated support for Spark 1.6 and 2.1
+
+   Beginning with this release, support for Spark versions 1.6 and 2.1 has
+   been deprecated. For information about the supported Spark versions, see
+   the Installation and Configuration Guide.
+
+ * [SPARKJ-288] Deprecated support for JDBC 4.0 (Java 6)
+ 
+   Beginning with this release, support for JDBC 4.0 (Java 6) has been
+   deprecated. Support will be removed in a future release. For a list of
+   supported JDBC versions, see the Installation and Configuration Guide.
+
+
+2.6.4 ------------------------------------------------------------------------
+
+ * Removed support for Spark 1.5.2 and earlier
+
+   Beginning with this release, the driver no longer supports servers that run
+   Spark versions 1.5.2 or earlier. For information about the supported Spark 
+   versions, see the Installation and Configuration Guide.
+
+
+Version History ==============================================================
+
+2.6.19 -----------------------------------------------------------------------
+
+Released 2021-07-30
+
+Enhancements & New Features
+
+ * [SPARKJ-405][SPARKJ-418] Added support for downloading query results from
+   a cloud store
+
+   You can now download query results from a cloud store, such as AWS or 
+   Azure, if the server supports the URL_BASED_SET result set type.
+
+ * [SPARKJ-508] Third-party library upgrade
+
+   The connector has been upgraded with the following third-party libraries:
+   - Apache Commons Codec 1.15 (previously 1.9)
+   - Apache HttpClient 4.5.13 (previously 4.5.3)
+   - Apache HttpCore 4.4.14 (previously 4.4.6)
+
+
+2.6.18 -----------------------------------------------------------------------
+
+Released 2021-06-17
+
+Enhancements & New Features
+
+ * [SPARKJ-422] Updated SSL support
+ 
+   The connector now supports BCFKS TrustStores files. To specify the 
+   TrustStore type, set the SSLTrustStoreType property to the preferred type.
+   For more information, see the Installation and Configuration Guide.
+   
+ * [SPARKJ-420] Ignore transactions support
+
+   You can now ignore transaction-related operations. To do this, set the 
+   IgnoreTransactions property to 1. For more information, see the
+   Installation and Configuration Guide.
+
+ * [SPARKJ-390] Updated getColumns support
+  
+   For the getColumns JDBC API call, you can now retrieve the nullability
+   information for the columns from the server. 
+
+ * [SPARKJ-404][SPARKJ-458][SPARKJ-462][SPARKJ-464] Updated third-party 
+   libraries
+ 
+   The connector has been updated to use the following libraries:
+   - netty 4.1.65.Final (previously 4.1.50.Final)
+   - jackson 2.12.3 (previously 2.10.1)
+
+   The JDBC 4.1 connector has been updated to use the following libraries:
+   - log4j 2.12.1
+   - slf4j 1.7.30
+
+
+Resolved Issues
+The following issues have been resolved in Simba Apache Spark JDBC Connector 
+2.6.18.
+
+ * [SPARKJ-448] The connector reveals the ProxyUID and ProxyPWD credentials to 
+   the server as server-side properties. 
+
+ * [SPARKJ-347] The HiveJDBCDataEngine does not check getFunctions and returns
+   an empty result set. 
+
+ * [SPARKJ-355] When calling GetTypeInfo, the connector returns incorrect data
+   types. 
+   
+ * [SPARKJ-360] When querying getColumns, the connector returns a getColumns 
+   metadata operation and a DESCRIBE query.
+
+
+2.6.17 -----------------------------------------------------------------------
+
+Released 2020-10-23 
+
+Resolved Issues
+The following issues have been resolved in Simba Spark JDBC Driver 2.6.17.
+
+ * [SPARKJ-328] In some cases, non-row count queries result in the driver 
+   returning an incorrect error.
+ 
+ * [SPARKJ-336][SPARKJ-353] In some cases, the user-agent entry validation
+   logic rejects valid user-agent entry strings.
+
+ * [SPARKJ-348] The driver does not honor the values set via the
+   Statement.setFetchSize JDBC API call. 
+    
+ * [SPARKJ-406] The driver does not return the correct row count result when 
+   it is provided by the server.
+
+
+2.6.16 -----------------------------------------------------------------------
+
+Released 2020-07-31
+
+Enhancements & New Features
+
+ * [SPARKJ-363] Custom HTTP headers
+ 
+   The driver now supports custom HTTP headers in connection URLs. For more 
+   information, see the Installation and Configuration Guide.
+
+ * [SPARKJ-364] Updated third-party libraries
+ 
+   The JDBC 4.2 driver has been updated to use the following libraries:
+   - log4j 2.13.3
+   - slf4j 1.7.30
+   
+   The JDBC 4.0 and 4.1 versions of the driver continue to use the previous
+   versions of these libraries.
+   
+ * [SPARKJ-397] Support for Spark 3.0
+ 
+   The driver now supports Spark 3.0   
+  
+
+Resolved Issues
+The following issue has been resolved in Simba Spark JDBC Driver 2.6.16.
+
+ * [SPARKJ-349] The driver does not log correct socket timeout values. 
+ 
+ * [SPARKJ-366] When fetching arrow serialized results, the driver returns
+   an "Out of Memory" error message. 
+ 
+ * [SPARKJ-367] In some cases, the driver delivers ambiguous error messages
+   related to OAuth authentication. 
+   
+
+2.6.15 -----------------------------------------------------------------------
+
+Released 2020-07-15
+
+Enhancements & New Features
+
+ * [SPARKJ-258] OAuth 2.0 authentication
+ 
+   You can now authenticate your connection with OAuth 2.0. For more 
+   information, see the Installation and Configuration Guide.
+   
+ * [SPARKJ-242] HTTP proxy support
+ 
+   The driver now supports connecting through an HTTP proxy server. For more 
+   information, see the Installation and Configuration Guide.
+
+Resolved Issues
+The following issue has been resolved in Simba Spark JDBC Driver 2.6.15.
+
+ * [SPARKJ-354] On Windows, when connecting through RStudio, the driver does 
+   not recognize the license file.
+
+
+2.6.14 -----------------------------------------------------------------------
+
+Released 2020-06-15
+
+Enhancements & New Features
+
+ * [SPARKJ-329] Improved result set
+ 
+   The driver now returns a result set for results in the SET key=value 
+   format.
+   
+
+Resolved Issues
+The following issues have been resolved in Simba Spark JDBC Driver 2.6.14.
+
+ * [SPARKJ-325][SPARKJ-326] When TransportMode is set to http and AuthMech,
+   UID, and PWD are not specified, the driver returns a NullPointerException.
+  
+   This issue has been resolved. The driver now correctly defaults to
+   No Authentication (AuthMech=3) in this case.
+   
+ * [SPARKJ-334] In some cases, queries starting with FROM or WITH are not
+   executed when called using executeQuery().   
+   
+ * [SPARKJ-338] In some cases, when using executeBatch with INSERT, queries
+   only include the first batch of parameters.
+   
+ * [SPARKJ-352] The behavior of timestamps in Arrow serialized results is
+   inconsistent.
+ 
+   This issue has been resolved. Timestamps for Arrow serialized results are
+   now consistent with non-Arrow serialized results.
+
+
+2.6.13 -----------------------------------------------------------------------
+
+Released 2020-05-08
+   
+Enhancements & New Features
+
+ * [SPARKJ-243] Improved connection efficiency
+ 
+   The driver now only opens one session per connection, as long as the server
+   provides sufficient information during the initial OpenSession call.
+   Previously, the driver opened two sessions per connection in order to
+   retrieve the required server information. 
+
+ * [SPARKJ-261] Improved metadata operations
+ 
+   The driver has been optimized to use improved metadata operations when
+   connecting to a supporting server. 
+
+ * [SPARKJ-264] Support for Apache Arrow result set support in JDBC 4.2
+ 
+   The JDBC 4.2 driver is now able to parse result sets that have been 
+   formatted using Apache Arrow.
+   
+   As part of this update, the driver now includes the following third-party
+   libraries:
+   - Apache Arrow
+   - ASM
+   - Byte Buddy
+   - FlatBuffers
+   - Netty
+
+ * [SPARKJ-331] Removed driver name spaces in the user-agent string
+ 
+   The driver now sends the user-agent string as
+   "SimbaSparkJDBCDriver/<driver version>". Previously, it was sent as "Simba
+   Spark JDBCDriver/<driver version>".
+
+ * [SPARKJ-332] Support for Java 11
+ 
+   The driver now supports Java 11.
+
+
+Resolved Issues
+The following issue has been resolved in Simba Spark JDBC Driver 2.6.13.
+
+ * [SPARKJ-327] Error messages returned in the X-Thriftserver-Error-Message
+   HTTP header are not displayed.
+   
+ * [SPARKJ-339] A newer, unrecognized server protocol version triggers the 
+   driver to fallback to the lowest known version. 
+   
+   This issue has been resolved. The driver will now fallback to the highest 
+   known and supported protocol.
+   
+
+2.6.12 -----------------------------------------------------------------------
+
+Released 2020-03-20
+   
+Enhancements & New Features
+
+ * [SPARKJ-239][SPARKJ-241] Improved handling for HTTP 503 and HTTP 429 
+   responses 
+
+   The driver now returns more informative error messages when the server 
+   returns an HTTP 503 or HTTP 429 response. 
+
+   Additionally, you can now configure the driver to retry the operation that 
+   caused the response if the server returned Retry-After headers along with 
+   the response. To do this, set the following new properties:
+   - For HTTP 503 responses: ClusterAutostartRetry and 
+     ClusterAutostartRetryTimeout
+   - For HTTP 429 responses: RateLimitRetry and RateLimitRetryTimeout
+
+   For more information, see the Installation and Configuration Guide.
+
+ * [SPARKJ-240] User agent entry in HTTP request
+
+   The driver now supports the use of a user agent entry in HTTP requests. 
+   You can set the new UserAgentEntry property to the user agent entry. For 
+   more information, see the Installation and Configuration Guide.
+
+ * [SPARKJ-257] Improved data retrieval performance
+
+   The driver now uses fewer server round-trips to query and retrieve data 
+   when connected to a server that supports the required wire protocol 
+   improvements.
+
+ * [SPARKJ-312] Session tagging
+
+   When connecting to certain distributions of Spark, the driver sends an 
+   additional header. This header contains a unique identifier that 
+   corresponds to the current session. 
+
+ * [SPARKJ-313] HTTP 4xx/5xx error messages
+
+   When connecting to certain distributions of Spark, the driver now displays 
+   an error message for all HTTP 4xx and 5xx responses, if such an error 
+   message is provided by the server.
+
+
+Resolved Issues
+The following issues have been resolved in Simba Spark JDBC Driver 2.6.12.
+
+ * [SPARKJ-310] When you use the driver with the Denodo application, it 
+   returns the following error: "Could not initialize Class".
+
+ * [SPARKJ-318] If two queries with a different number of columns are 
+   executed in a multi-threaded environment, the driver throws an Index Out 
+   Of Bound exception.
+
+ * [SPARKJ-319] SQL statements using the EXISTS predicate return an error.
+
+ * [SPARKJ-322] The driver returns incorrect results for decimal columns.
+
+
+2.6.11 -----------------------------------------------------------------------
+
+Released 2020-02-03
+   
+Enhancements & New Features
+
+ * [SPARKJ-250] Updated Apache Spark support
+
+   The driver now supports the latest patches for Apache Spark version 2.4.
+
+ * [SPARKJ-262] Updated Jackson library
+
+   The driver now uses version 2.10.1 of the Jackson library. Previously, the 
+   driver used Jackson version 2.9.9.
+
+ * [SPARKJ-294] Updated Thrift library
+
+   The JDBC 4.2 version of the driver now uses version 0.13.0 of the Thrift 
+   library. Previously, this version of the driver used Thrift version 0.12.0.
+
+   The JDBC 4.0 and 4.1 versions of the driver continue to use Thrift version 
+   0.12.0.
+
+
+Resolved Issues
+The following issues have been resolved in Simba Spark JDBC Driver 2.6.11.
+
+ * [SPARKJ-267] The JDBC 4.1 version of the driver fails to connect to servers 
+   that require encryption using TLS 1.2.
+
+   This issue has been resolved. However, be aware that this issue still
+   persists for the JDBC 4.0 version of the driver. For more information, see
+   the "Known Issues" section.
+
+ * [SPARKJ-271] When you use the com.simba.spark.jdbc.DataSource class to
+   connect with the JDBC 4.1 or 4.2 version of the driver, the driver returns 
+   a class cast exception.
+
+
+2.6.10 -----------------------------------------------------------------------
+
+Released 2019-10-03
+   
+Resolved Issues
+The following issue has been resolved in Simba Spark JDBC Driver 2.6.10.
+
+ * [SPARKJ-252] When running a query with an IN clause on a BOOLEAN type 
+   column, the driver fails to convert "1" or "0" values to "true" or "false",
+   causing the query to fail.
+
+
+==============================================================================
