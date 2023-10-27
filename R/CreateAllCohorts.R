@@ -104,7 +104,7 @@ createCohorts <- function(connectionDetails,
   
   data_whole<- DatabaseConnector::querySql(conn, sql)
   data_whole <- data_whole %>% mutate(AGE_VALIED=ifelse(AGE>=50,1,0)) %>%
-    reframe(OSTEO_PERSON=n_distinct(PERSON_ID),
+    summarise(OSTEO_PERSON=n_distinct(PERSON_ID),
             OVER_50=sum(AGE_VALIED))
   person_osteoporosis <- data.frame(matrix(nrow=1, ncol=4))
   colnames(person_osteoporosis) <- c("WHOLE", "WOMEN", "OSTEO_WOMEN", "OVER50")
@@ -120,9 +120,9 @@ createCohorts <- function(connectionDetails,
                                            oracleTempSchema = oracleTempSchema,
                                            cdm_database_schema = cdmDatabaseSchema,
                                            cohort_database_schema = cohortDatabaseSchema,
-                                           cohort_table = cohortTable,
-                                           yearStartDate = startDate,
-                                           yearEndDate = endDate)
+                                           cohort_table = paste0(cohortTable, "_DRUG"),
+                                           yearStartDate = lubridate::year(startDate),
+                                           yearEndDate = lubridate::year(endDate))
  
   sql <- SqlRender::translate(sql, targetDialect = attr(conn, "dbms"))
   data_whole<- DatabaseConnector::querySql(conn, sql)
@@ -138,7 +138,7 @@ createCohorts <- function(connectionDetails,
     sql <- "SELECT * FROM @cohort_database_schema.@cohort_table WHERE cohort_definition_id = @cohortId"
     sql <- SqlRender::render(sql,
                              cohort_database_schema = cohortDatabaseSchema,
-                             cohort_table = cohortTable,
+                             cohort_table = paste0(cohortTable, "_DRUG"),
                              cohortId = i)
     sql <- SqlRender::translate(sql, targetDialect = attr(conn, "dbms"))
     data_drug <- DatabaseConnector::querySql(conn, sql)

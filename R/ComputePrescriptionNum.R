@@ -14,7 +14,7 @@ computePrescriptionNum <- function(databaseName,
   `%>%` <- magrittr::`%>%`
   '%!in%' <- Negate('%in%')
 
-  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP4HIRA")
+  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP")
   cohortsToCreate <- read.csv(pathToCsv)
   
   ParallelLogger::logInfo("Calculating prescription numbers")

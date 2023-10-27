@@ -94,7 +94,7 @@ runPathwayAnalysis <- function(connectionDetails,
       STEP_2=ifelse(STEP_1==STEP_2, NA, STEP_2),
       STEP_3=ifelse(STEP_2==STEP_3, NA, STEP_3)) %>%
     group_by(PATHWAY_ANALYSIS_GENERATION_ID, TARGET_COHORT_ID, STEP_1, STEP_2, STEP_3) %>%
-    reframe(personCount=sum(COUNT_VALUE)) %>%
+    summarise(personCount=sum(COUNT_VALUE)) %>%
     as.data.frame()
   write.csv(x=cleaned_pathway_results, file = file.path(tpOutputFolder, "cleaned_pathway.csv"))
 
