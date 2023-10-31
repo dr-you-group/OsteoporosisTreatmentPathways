@@ -40,11 +40,11 @@ How to run
 	options(andromedaTempFolder = "s:/andromeda"))
 	 
 	# Details for connecting to the server:
-	 connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "pdw",
-																	 server = Sys.getenv("PDW_SERVER"),
-																	 user = NULL,
-																	 password = NULL,
-																	 port = Sys.getenv("PDW_PORT"))
+	connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "pdw",
+ 									server = Sys.getenv("PDW_SERVER"),
+									user = NULL,
+									password = NULL,
+									port = Sys.getenv("PDW_PORT"))
 	 
 	# The name of the database schema where the CDM data can be found:
 	cdmDatabaseSchema <- "CDM_IBM_MDCD_V1153.dbo"
