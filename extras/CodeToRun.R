@@ -8,7 +8,7 @@ maxCores <- parallel::detectCores()
  outputFolder <- "s:/ODTP"
  
 # Optional: specify where the temporary files (used by the Andromeda package) will be created:
-options(andromedaTempFolder = "s:/andromeda"))
+options(andromedaTempFolder = "s:/andromeda")
  
 # Details for connecting to the server:
  connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "pdw",
