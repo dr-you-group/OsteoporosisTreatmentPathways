@@ -6,8 +6,8 @@
 - Study lead: 
 - Study lead forums tag: 
 - Study start date: 2023-03-08
-- Study end date: -
-- Protocol: -
+- Study end date: 2023-12-31
+- Protocol: https://github.com/dr-you-group/OsteoporosisTreatmentPathways/blob/main/documents/CDMBone_Research%20Protocol_20231030.docx
 - Publications: -
 - Results explorer: https://lijbdj2634.shinyapps.io/TreatmentPathways/
 
@@ -25,14 +25,16 @@ How to run
 	```r
 	renv::restore()
 	```
+	
 	Please deactivate renv package if you use Docker containers.
+	
+	```r
+	renv::deactivate()
+	```
 
-   	```r
-    	renv::deactivate()
-    	```
-4. In RStudio, select 'Build' then 'Install and Restart' to build the package.
+3. In RStudio, select 'Build' then 'Install and Restart' to build the package.
 
-5. Once installed, you can execute the study by modifying and using the code below. For your convenience, this code is also provided under `extras/CodeToRun.R`:
+4. Once installed, you can execute the study by modifying and using the code below. For your convenience, this code is also provided under `extras/CodeToRun.R`:
 
 	```r
     library(ODTP)
