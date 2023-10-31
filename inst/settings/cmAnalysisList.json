@@ -171,7 +171,7 @@
       "riskWindowEnd": 730,
       "firstExposureOnly": false
     },
-    "description": "ITT(1Y), 1:1 matching (0 day)",
+    "description": "ITT(2Y), 1:1 matching (washoutPeriod 0 day)",
     "trimByPsArgs": {
       "trimFraction": 0.05,
       "attr_class": "args"
@@ -479,7 +479,7 @@
       "riskWindowEnd": 1095,
       "firstExposureOnly": false
     },
-    "description": "ITT(5Y), 1:1 matching (0 day)",
+    "description": "ITT(5Y), 1:1 matching (washoutPeriod 0 day)",
     "trimByPsArgs": {
       "trimFraction": 0.05,
       "attr_class": "args"
@@ -787,7 +787,7 @@
       "riskWindowEnd": 0,
       "firstExposureOnly": false
     },
-    "description": "On treatment, 1:1 matching (0 days)",
+    "description": "On treatment, 1:1 matching (washoutPeriod 0 days)",
     "trimByPsArgs": {
       "trimFraction": 0.05,
       "attr_class": "args"
@@ -1095,7 +1095,7 @@
       "riskWindowEnd": 730,
       "firstExposureOnly": false
     },
-    "description": "ITT(1Y), 1:1 matching (365 day)",
+    "description": "ITT(2Y), 1:1 matching (washoutPeriod 365 day)",
     "trimByPsArgs": {
       "trimFraction": 0.05,
       "attr_class": "args"
@@ -1403,7 +1403,7 @@
       "riskWindowEnd": 1095,
       "firstExposureOnly": false
     },
-    "description": "ITT(5Y), 1:1 matching (365 day)",
+    "description": "ITT(5Y), 1:1 matching (washoutPeriod 365 day)",
     "trimByPsArgs": {
       "trimFraction": 0.05,
       "attr_class": "args"
@@ -1711,7 +1711,7 @@
       "riskWindowEnd": 0,
       "firstExposureOnly": false
     },
-    "description": "On treatment, 1:1 matching (365 days)",
+    "description": "On treatment, 1:1 matching (washoutPeriod 365 days)",
     "trimByPsArgs": {
       "trimFraction": 0.05,
       "attr_class": "args"

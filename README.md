@@ -20,11 +20,19 @@ How to run
 
    **R version 4.2 is required to run this package.**
 
-2. Open your study package in RStudio. 
+2. Open your study package in RStudio. Use the following code to install all the dependencies:
+   
+	```r
+	renv::restore()
+	```
+	Please deactivate renv package if you use Docker containers.
 
-3. In RStudio, select 'Build' then 'Install and Restart' to build the package.
+   	```r
+    	renv::deactivate()
+    	```
+4. In RStudio, select 'Build' then 'Install and Restart' to build the package.
 
-4. Once installed, you can execute the study by modifying and using the code below. For your convenience, this code is also provided under `extras/CodeToRun.R`:
+5. Once installed, you can execute the study by modifying and using the code below. For your convenience, this code is also provided under `extras/CodeToRun.R`:
 
 	```r
     library(ODTP)
@@ -82,4 +90,4 @@ How to run
 
 
     ```
-5. Send the zip file ```<DatabaseId>_results.zip``` in the output folder to the study coordinator.
+6. Send the zip file ```<DatabaseId>_results.zip``` in the output folder to the study coordinator.
