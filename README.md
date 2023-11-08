@@ -1,13 +1,16 @@
-[Osteoporosis Treatment Pathways Analysis]
+Osteoporosis Treatment Pathways Analysis
 =============
-- Analytics use case(s): Characterization
-- Study type: Clinical Application
-- Tags: Osteoporosis, TreatmentPathways, CDM
-- Study lead: 
-- Study lead forums tag: 
+
+<img src="https://img.shields.io/badge/Study%20Status-Started-blue.svg" alt="Study Status: Started">
+
+- Analytics use case(s): **Characterization**
+- Study type: **Clinical Application**
+- Tags: **Osteoporosis, TreatmentPathways**
+- Study lead: **Seng Chan You, Dajeong Bu**
+- Study lead forums tag: **[SCYou](https://forums.ohdsi.org/u/scyou/)**
 - Study start date: 2023-03-08
-- Study end date: 2023-12-31
-- Protocol: https://github.com/dr-you-group/OsteoporosisTreatmentPathways/blob/main/documents/CDMBone_Research%20Protocol_20231030.docx
+- Study end date: 
+- Protocol: https://github.com/ohdsi-studies/OsteoporosisTreatmentPathways/blob/main/documents/CDMBone_Research%20Protocol_20231030.docx
 - Publications: -
 - Results explorer: https://lijbdj2634.shinyapps.io/TreatmentPathways/
 
