@@ -375,9 +375,6 @@ extractSubResults <- function(connectionDetails,
                                  createTable = TRUE)
 
   CohortCounts <- read.csv(file.path(outputFolder, "results/TreatmentPathways/CohortCounts.csv"))
-  
-  pathToCsv <- system.file("settings", "Table1Specs.csv", package = "ODTP")
-  specifications <- read.csv(pathToCsv)
   covariates_1  <-  FeatureExtraction::createDefaultCovariateSettings()
 
   
@@ -392,8 +389,13 @@ extractSubResults <- function(connectionDetails,
                                                              rowIdField = "subject_id",
                                                              aggregated = TRUE,
                                                              covariateSettings = covariates_1)
-      table1 <- FeatureExtraction::createTable1(covariateData1 = covariateData_1, specifications = specifications, cohortId1 = id)
-      write.csv(table1, file.path(outputFolder, paste0("results/TreatmentPathways/table1_", id, ".csv")))
+      covariateRef <- as.data.frame(covariateData_1$covariateRef)
+      covariates <- as.data.frame(covariateData_1$covariates)
+      covariates <- covariates %>% left_join(covariateRef, by = "covariateId")
+      covariateContinous <- as.data.frame(covariateData_1$covariatesContinuous)
+      covariateContinous <- covariateContinous %>% left_join(covariateRef, by = "covariateId")
+      write.csv(covariates, file.path(outputFolder, paste0("results/TreatmentPathways/covariates", id, ".csv")))
+      write.csv(covariateContinous, file.path(outputFolder, paste0("results/TreatmentPathways/covariateContinous", id, ".csv")))
       FeatureExtraction::saveCovariateData(covariateData = covariateData_1, file = file.path(outputFolder, paste0("tmpData/covariate_1_", id, ".zip")))
       
       sql <- SqlRender::loadRenderTranslateSql("customCovariates.sql",
