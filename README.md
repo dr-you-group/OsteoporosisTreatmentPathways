@@ -18,7 +18,7 @@ How to run
 ==========
 1. Follow [these instructions](https://ohdsi.github.io/Hades/rSetup.html) for seting up your R environment, including RTools and Java.
 
-   **R version 4.2 is required to run this package.**
+   **R version 4.1.3 is required to run this package.**
 
 2. Open your study package in RStudio. 
 
