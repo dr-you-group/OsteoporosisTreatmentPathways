@@ -51,7 +51,7 @@ How to run
 	 
 	# The name of the database schema and table where the study-specific cohorts will be instantiated:
 	cohortDatabaseSchema <- "scratch.dbo"
-	cohortTable <- "mschuemi_skeleton"
+	cohortTable <- "ODTP" # Please, use this name
 
 	# # Some meta-information that will be used by the export function:
 	databaseId <- ""
