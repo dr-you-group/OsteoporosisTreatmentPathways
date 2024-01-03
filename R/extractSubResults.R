@@ -81,7 +81,14 @@ extractSubResults <- function(connectionDetails,
     select(COHORT_DEFINITION_ID, SUBJECT_ID, PRECRIPTION_CNT)
   first_line <- first_line %>% left_join(first_line_cnt)
   first_line <- first_line %>% mutate(INVALID = ifelse(as.numeric(yearEndDate - LINE_START_DATE)<365,1,0)) # minimum observed time is 365 days.
-
+  
+  first_line_agg <- first_line %>% mutate(START_MONTH_YEAR = format(LINE_START_DATE, "%Y-%m-01")) %>% 
+    filter(TREATMENT_DURATION >= 340 & INVALID == 0) %>% 
+    group_by(START_MONTH_YEAR, COHORT_DEFINITION_ID) %>% 
+    summarise(P_CNT = n_distinct(SUBJECT_ID)) %>% 
+    as.data.frame()
+  write.csv(first_line_agg, file = file.path(outputFolder, "results/TreatmentPathways/adherence_1Y.csv"))
+  
   saveRDS(object = first_line, file = file.path(outputFolder, "tmpData/first_line.RDS"))
 
   # Duration of Treatment
