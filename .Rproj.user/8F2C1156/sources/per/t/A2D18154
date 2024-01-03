@@ -1,0 +1,26 @@
+{
+    "id": "A2D18154",
+    "path": "~/GitHub/OsteoporosisTreatmentPathways_ANAM/OsteoporosisTreatmentPathways/renv/activate.R",
+    "project_path": "renv/activate.R",
+    "type": "r_source",
+    "hash": "666552586",
+    "contents": "",
+    "dirty": false,
+    "created": 1704247965117.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "12,20",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1700720016,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1700720016,
+    "read_only": false,
+    "read_only_alternatives": []
+}
