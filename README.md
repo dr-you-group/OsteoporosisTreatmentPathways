@@ -68,8 +68,8 @@ How to run
 
 	# # Some meta-information that will be used by the export function:
 	databaseId <- ""
-	StartDate <- "" # The start date of CDM-transformation
-	EndDate <- "" # The end date of CDM-transformation
+	StartDate <- "" # The start date of CDM-transformation (ex. 2006-01-01, The day of the date must be set to '01')
+	EndDate <- "" # The end date of CDM-transformation (ex. 2021-12-31)
 	# # For Oracle: define a schema that can be used to emulate temp tables:
 	oracleTempSchema <- NULL
 
