@@ -8,7 +8,7 @@ atlasId,atlasName,cohortId,name,cohortType,StartYear
 987,[ODTP] Osteoporotic fracture (unspecified),987,ODTP_Osteoporotic_fracture_unspecified,E_Outcome
 966,[ODTP] New users of PO Bisphosphonate as first line therapy,966,ODTP_New_users_of_PO_Bisphosphonate_as_first_line_therapy,E_Target
 965,[ODTP] New users of IV Bisphosphonate as first line therapy,965,ODTP_New_users_of_IV_Bisphosphonate_as_first_line_therapy,E_Target
-1,Osteoporosis (2012-2021),1,[ODTP] Osteoporosis,P_Target,
+1,Osteoporosis (2012-2021),1,[ODTP] Osteoporosis,P_Target
 2,Osteoporosis (2012),2,[ODTP] Osteoporosis_sub,P_Target,2012
 3,Osteoporosis (2013),3,[ODTP] Osteoporosis_sub,P_Target,2013
 4,Osteoporosis (2014),4,[ODTP] Osteoporosis_sub,P_Target,2014
