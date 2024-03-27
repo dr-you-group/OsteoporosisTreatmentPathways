@@ -8,7 +8,8 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4129394,4053828)) -- vertebral
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (45757330,45757329,4222001,4203555,4053828,4013596,4013156,4009296,4209549,4210437,4129394,4013604,4008222,4013160,4129420,4013161,35624169,4053654,35624484,4001458,45772068,4204781)) I
+						LEFT JOIN (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (45770877,4203556)) E ON I.concept_id = E.concept_id WHERE E.concept_id is null) -- vertebral
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -20,7 +21,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4138412,4230399,45767037)) -- Hip (Proximal femur)
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (433856,4027460,4281541,4015503,4009610,4015981,4135748)) I ) -- Hip (Proximal femur)
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -32,7 +33,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4300192)) -- Pelvis
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (81141,4296627,78276,81696,4276036,77405,76240,4263360,75943,4008356,4013613)) I ) -- Pelvis
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -44,7 +45,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (46270317,4302740)) -- Shoulder
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (4237458,4319889,4302740)) I ) -- Clavicle+Scapula+Sternum
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -56,7 +57,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (440825,4135750,4135749)) -- Upper leg
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (438887,440825,440856,440548,4135749,435094,435093,442560,438583)) I ) -- other femur
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -68,7 +69,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4185758)) -- Lower leg
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (435666,4070301,441979,436252,4320628,437693,4012455,4133194,4012456,40492392,436209,40490827,4211657,4185758,4186548)) I ) -- tibia+fibula
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -80,7 +81,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (442619)) -- Upper arm
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (434494,4133610,436250,435940,4175616,434497,440228,4138299,437121)) I ) -- humerus
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -92,7 +93,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4278672)) -- Lower arm
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (436251,4136718,433047,441973,4136715,441423,437400,4134325,433333,437116,4134322,440546,440538,4138301,432747,441974,4278672,440851)) I ) -- radius+ulnar
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -104,7 +105,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4218884)) -- Wrist
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (439162,4105127,432749,441428,4085552,437998,4211657,4185758,4186548)) I ) -- Ankle
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -120,7 +121,7 @@ FROM (
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
-SELECT 100010800 AS covariate_id, row_id, 1 AS covariate_value
+SELECT 1000010800 AS covariate_id, row_id, 1 AS covariate_value
 FROM (
 	SELECT DISTINCT condition_concept_id,
 		cohort.subject_id AS row_id
@@ -128,95 +129,11 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (33737001)) -- Rib
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (4013604,35624169,4013160,4013596,4209549,4203556,4204781,4203555,4222001,4001458,4053654,4129394,4129420,4053828,4009296,4008222,35624484,4013161,4013156,4210437,45770877,45757330,45772068,45757329,437993,433329,4129393,4013612,4008354,437689,4008355,441698,436540,443248,433856,4027460,4281541,4015503,4009610,4015981,4135748,81141,4296627,78276,81696,4276036,77405,76240,4263360,75943,4008356,4013613,4237458,4319889,4302740,434494,4133610,436250,435940,4175616,434497,440228,4138299,437121,438887,440825,440856,440548,4135749,435094,435093,442560,438583,435666,4070301,441979,436252,4320628,437693,4012455,4133194,4012456,40492392,436209,40490827,4211657,4185758,4186548,436251,4136718,433047,441973,4136715,441423,437400,4134325,433333,437116,4134322,440546,440538,4138301,432747,441974,4278672,440851,439162,4105127,432749,441428,4085552,437998,4211657,4185758,4186548,40441585,4069306,40480160,73571)) I ) -- Osteoporotic fracture
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
 SELECT 100011800 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4071876)) -- Hand
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100012800 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4048393)) -- Foot
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100013800 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4177025)) -- Knee
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100014800 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4205238,4083488)) -- Elbow
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100015800 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4302223)) -- Skull
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100016800 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4085248,4129393)) -- Neck
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100017800 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -365, cohort.cohort_start_date)
-		AND condition_concept_id in (4003483,4069306,4067768) -- Unspecified
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100018800 AS covariate_id, row_id, 1 AS covariate_value
 FROM (
 	SELECT DISTINCT condition_concept_id,
 		cohort.subject_id AS row_id
@@ -236,7 +153,8 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4129394,4053828)) -- vertebral
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (45757330,45757329,4222001,4203555,4053828,4013596,4013156,4009296,4209549,4210437,4129394,4013604,4008222,4013160,4129420,4013161,35624169,4053654,35624484,4001458,45772068,4204781)) I
+						LEFT JOIN (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (45770877,4203556)) E ON I.concept_id = E.concept_id WHERE E.concept_id is null) -- vertebral
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -248,7 +166,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4138412,4230399,45767037)) -- Hip (Proximal femur)
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (433856,4027460,4281541,4015503,4009610,4015981,4135748)) I ) -- Hip (Proximal femur)
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -260,7 +178,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4300192)) -- Pelvis
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (81141,4296627,78276,81696,4276036,77405,76240,4263360,75943,4008356,4013613)) I ) -- Pelvis
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -272,7 +190,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (46270317,4302740)) -- Shoulder
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (4237458,4319889,4302740)) I ) -- Clavicle+Scapula+Sternum
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -284,7 +202,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (440825,4135750,4135749)) -- Upper leg
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (438887,440825,440856,440548,4135749,435094,435093,442560,438583)) I ) -- other femur
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -296,7 +214,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4185758)) -- Lower leg
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (435666,4070301,441979,436252,4320628,437693,4012455,4133194,4012456,40492392,436209,40490827,4211657,4185758,4186548)) I ) -- tibia+fibula
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -308,7 +226,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (442619)) -- Upper arm
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (434494,4133610,436250,435940,4175616,434497,440228,4138299,437121)) I ) -- humerus
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -320,7 +238,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4278672)) -- Lower arm
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (436251,4136718,433047,441973,4136715,441423,437400,4134325,433333,437116,4134322,440546,440538,4138301,432747,441974,4278672,440851)) I ) -- radius+ulnar
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -332,7 +250,7 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4218884)) -- Wrist
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (439162,4105127,432749,441428,4085552,437998,4211657,4185758,4186548)) I ) -- Ankle
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
@@ -348,7 +266,7 @@ FROM (
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
-SELECT 100010801 AS covariate_id, row_id, 1 AS covariate_value
+SELECT 1000010801 AS covariate_id, row_id, 1 AS covariate_value
 FROM (
 	SELECT DISTINCT condition_concept_id,
 		cohort.subject_id AS row_id
@@ -356,95 +274,11 @@ FROM (
 	INNER JOIN @cdm_database_schema.condition_occurrence
 		ON cohort.subject_id =condition_occurrence.person_id
 		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (33737001)) -- Rib
+		AND condition_concept_id in (select distinct I.concept_id FROM (select concept_id from @vocabulary_database_schema.CONCEPT where concept_id in (4013604,35624169,4013160,4013596,4209549,4203556,4204781,4203555,4222001,4001458,4053654,4129394,4129420,4053828,4009296,4008222,35624484,4013161,4013156,4210437,45770877,45757330,45772068,45757329,437993,433329,4129393,4013612,4008354,437689,4008355,441698,436540,443248,433856,4027460,4281541,4015503,4009610,4015981,4135748,81141,4296627,78276,81696,4276036,77405,76240,4263360,75943,4008356,4013613,4237458,4319889,4302740,434494,4133610,436250,435940,4175616,434497,440228,4138299,437121,438887,440825,440856,440548,4135749,435094,435093,442560,438583,435666,4070301,441979,436252,4320628,437693,4012455,4133194,4012456,40492392,436209,40490827,4211657,4185758,4186548,436251,4136718,433047,441973,4136715,441423,437400,4134325,433333,437116,4134322,440546,440538,4138301,432747,441974,4278672,440851,439162,4105127,432749,441428,4085552,437998,4211657,4185758,4186548,40441585,4069306,40480160,73571)) I ) -- Osteoporotic fracture
 		AND cohort.cohort_definition_id IN (@cohort_id)
 ) by_row_id
 union all
 SELECT 100011801 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4071876)) -- Hand
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100012801 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4048393)) -- Foot
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100013801 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4177025)) -- Knee
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100014801 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4205238,4083488)) -- Elbow
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100015801 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4302223)) -- Skull
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100016801 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (select ca.descendant_concept_id from @cdm_database_schema.CONCEPT_ANCESTOR ca where ca.ancestor_concept_id in (4085248,4129393)) -- Neck
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100017801 AS covariate_id, row_id, 1 AS covariate_value
-FROM (
-	SELECT DISTINCT condition_concept_id,
-		cohort.subject_id AS row_id
-	FROM @cohort_table cohort
-	INNER JOIN @cdm_database_schema.condition_occurrence
-		ON cohort.subject_id =condition_occurrence.person_id
-		WHERE condition_start_date < DATEADD(DAY, 0, cohort.cohort_start_date) AND condition_start_date >= DATEADD(DAY, -30, cohort.cohort_start_date)
-		AND condition_concept_id in (4003483,4069306,4067768) -- Unspecified
-		AND cohort.cohort_definition_id IN (@cohort_id)
-) by_row_id
-union all
-SELECT 100018801 AS covariate_id, row_id, 1 AS covariate_value
 FROM (
 	SELECT DISTINCT condition_concept_id,
 		cohort.subject_id AS row_id
