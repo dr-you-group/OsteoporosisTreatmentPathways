@@ -409,6 +409,7 @@ extractSubResults <- function(connectionDetails,
                                                dbms = connectionDetails$dbms,
                                                oracleTempSchema = oracleTempSchema,
                                                cdm_database_schema = cdmDatabaseSchema,
+                                               vocabulary_database_schema = cdmDatabaseSchema,
                                                cohort_table = paste0(cohortDatabaseSchema,".", cohortTable, "_demographics"),
                                                cohort_id = id)
             # Retrieve the covariate:
