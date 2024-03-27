@@ -102,7 +102,7 @@ createCohorts <- function(connectionDetails,
   
   data_whole<- DatabaseConnector::querySql(conn, sql)
   data_whole <- data_whole %>% mutate(AGE_VALIED=ifelse(AGE>=50,1,0)) %>%
-    reframe(OSTEO_PERSON=n_distinct(PERSON_ID),
+    summarise(OSTEO_PERSON=n_distinct(PERSON_ID),
             OVER_50=sum(AGE_VALIED))
   person_osteoporosis <- data.frame(matrix(nrow=1, ncol=4))
   colnames(person_osteoporosis) <- c("WHOLE", "WOMEN", "OSTEO_WOMEN", "OVER50")
