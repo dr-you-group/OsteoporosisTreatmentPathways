@@ -138,12 +138,13 @@ execute <- function(connectionDetails,
                            startDate = startDate,
                            endDate = endDate)
     
-    runPathwayAnalysis(connectionDetails,
-                       cohortDatabaseSchema,
-                       cohortTable,
-                       databaseName,
-                       outputFolder,
-                       startDate = startDate,
+    runPathwayAnalysis(connectionDetails = connectionDetails,
+                       cdmDatabaseSchema = cdmDatabaseSchema,
+                       cohortDatabaseSchema = cohortDatabaseSchema,
+                       cohortTable = cohortTable,
+                       oracleTempSchema = oracleTempSchema,
+                       outputFolder = outputFolder,
+                       databaseName = databaseName,
                        endDate = endDate)
     
     ParallelLogger::logInfo("Running CohortMethod analyses")
