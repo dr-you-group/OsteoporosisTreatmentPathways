@@ -24,6 +24,7 @@ runPathwayAnalysis <- function(connectionDetails,
                                cohortTable,
                                oracleTempSchema,
                                outputFolder,
+                               startDate,
                                endDate){
   tpOutputFolder <- file.path(outputFolder, "results/TreatmentPathways")
   if (!file.exists(tpOutputFolder)){
@@ -123,11 +124,11 @@ runPathwayAnalysis <- function(connectionDetails,
   saveRDS(base_data, file.path(outputFolder, "tmpData/PrescriptionEvents_line.RDS"))
 
   # Extract Sub Results
-  extractSubResults(connectionDetails,
-                    cdmDatabaseSchema,
-                    cohortDatabaseSchema,
-                    cohortTable,
-                    outputFolder=outputFolder,
+  extractSubResults(connectionDetails = connectionDetails,
+                    cdmDatabaseSchema = cdmDatabaseSchema,
+                    cohortDatabaseSchema = cohortDatabaseSchema,
+                    cohortTable = cohortTable,
+                    outputFolder = outputFolder,
                     startDate = startDate,
                     endDate = endDate)
 }
