@@ -19,14 +19,12 @@
 #' @export
 
 runPathwayAnalysis <- function(connectionDetails,
+                               cdmDatabaseSchema,
                                cohortDatabaseSchema,
                                cohortTable,
-                               databaseName,
+                               oracleTempSchema,
                                outputFolder,
-                               startDate = startDate,
-                               endDate = endDate
-                               ){
-
+                               endDate){
   tpOutputFolder <- file.path(outputFolder, "results/TreatmentPathways")
   if (!file.exists(tpOutputFolder)){
     dir.create(tpOutputFolder)
