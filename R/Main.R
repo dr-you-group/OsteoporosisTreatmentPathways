@@ -144,7 +144,6 @@ execute <- function(connectionDetails,
                        cohortTable = cohortTable,
                        oracleTempSchema = oracleTempSchema,
                        outputFolder = outputFolder,
-                       databaseName = databaseName,
                        endDate = endDate)
     
     ParallelLogger::logInfo("Running CohortMethod analyses")
