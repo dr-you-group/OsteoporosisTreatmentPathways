@@ -162,7 +162,7 @@
         "includeMapped": false,
         "includeDescendants": true
       }]},
-      "name": "[ODTP] Osteoporotic fracture:?Lower leg",
+      "name": "[ODTP] Osteoporotic fracture:Lower leg",
       "id": 3
     },
     {
@@ -183,7 +183,7 @@
         "includeMapped": false,
         "includeDescendants": true
       }]},
-      "name": "[ODTP] Osteoporotic fracture:?Upper arm",
+      "name": "[ODTP] Osteoporotic fracture:Upper arm",
       "id": 4
     },
     {
@@ -204,7 +204,7 @@
         "includeMapped": false,
         "includeDescendants": true
       }]},
-      "name": "[ODTP] Osteoporotic fracture:?Lower arm",
+      "name": "[ODTP] Osteoporotic fracture:Lower arm",
       "id": 5
     },
     {

@@ -19,13 +19,14 @@
 #' @export
 
 runPathwayAnalysis <- function(connectionDetails,
-                               cdmDatabaseSchema,
                                cohortDatabaseSchema,
                                cohortTable,
-                               oracleTempSchema,
+                               databaseName,
                                outputFolder,
-                               startDate,
-                               endDate){
+                               startDate = startDate,
+                               endDate = endDate
+                               ){
+
   tpOutputFolder <- file.path(outputFolder, "results/TreatmentPathways")
   if (!file.exists(tpOutputFolder)){
     dir.create(tpOutputFolder)
@@ -35,7 +36,7 @@ runPathwayAnalysis <- function(connectionDetails,
 
   # Create treatment pathway table structure:
   sql <- SqlRender::loadRenderTranslateSql("CreatePathwaysTable.sql",
-                                           "ODTP",
+                                           "ODTP4TMU",
                                            dbms = connectionDetails$dbms,
                                            oracleTempSchema = oracleTempSchema,
                                            cohortDatabaseSchema = cohortDatabaseSchema,
@@ -43,17 +44,19 @@ runPathwayAnalysis <- function(connectionDetails,
   DatabaseConnector::executeSql(connection=connection, sql=sql)
 
   # Create treatment pathway code table:
-  codeTable <- read.csv(file.path(getwd(), "inst/settings/PathwayAnalysisCodes.csv"))
+  pathToCsv <- system.file("settings", "PathwayAnalysisCodes.csv", package = "ODTP4TMU")
+  codeTable <- read.csv(pathToCsv)
 
   # Instantiate analysis:
   ParallelLogger::logInfo("Running treatment pathway analysis")
-  cohortsToCreate <- read.csv(file.path("inst", "settings", "CohortsToCreate.csv"))
+  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP4TMU")
+  cohortsToCreate <- read.csv(pathToCsv)
   cohortsToCreate <- cohortsToCreate[cohortsToCreate$cohortType=='P_Target',]
   pathway_results <- data.frame()
   for (id in cohortsToCreate$cohortId){
     ParallelLogger::logInfo(paste0("Execute pathways :", cohortsToCreate[cohortsToCreate$cohortId==id,]$atlasName))
     excSql <- SqlRender::loadRenderTranslateSql("TreatmentPathways.sql",
-                                                "ODTP",
+                                                "ODTP4TMU",
                                                 dbms = connectionDetails$dbms,
                                                 oracleTempSchema = oracleTempSchema,
                                                 cohortDatabaseSchema = cohortDatabaseSchema,
@@ -101,7 +104,7 @@ runPathwayAnalysis <- function(connectionDetails,
   # Create sequential treatment table:
   ParallelLogger::logInfo("Creating Sequential Treatment Table")
   sql <- SqlRender::loadRenderTranslateSql("createSequentialTreatmentTable.sql",
-                                           "ODTP",
+                                           "ODTP4TMU",
                                            dbms = connectionDetails$dbms,
                                            cdmDatabaseSchema=cdmDatabaseSchema,
                                            oracleTempSchema = oracleTempSchema,
@@ -124,11 +127,11 @@ runPathwayAnalysis <- function(connectionDetails,
   saveRDS(base_data, file.path(outputFolder, "tmpData/PrescriptionEvents_line.RDS"))
 
   # Extract Sub Results
-  extractSubResults(connectionDetails = connectionDetails,
-                    cdmDatabaseSchema = cdmDatabaseSchema,
-                    cohortDatabaseSchema = cohortDatabaseSchema,
-                    cohortTable = cohortTable,
-                    outputFolder = outputFolder,
-                    startDate = startDate,
-                    endDate = endDate)
+  extractSubResults(connectionDetails,
+                    cdmDatabaseSchema,
+                    cohortDatabaseSchema,
+                    cohortTable,
+                    outputFolder=outputFolder,
+                    startDate = "2012-01-01",
+                    endDate = "2021-12-31")
 }

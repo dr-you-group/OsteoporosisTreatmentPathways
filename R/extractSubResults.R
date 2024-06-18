@@ -81,14 +81,7 @@ extractSubResults <- function(connectionDetails,
     select(COHORT_DEFINITION_ID, SUBJECT_ID, PRECRIPTION_CNT)
   first_line <- first_line %>% left_join(first_line_cnt)
   first_line <- first_line %>% mutate(INVALID = ifelse(as.numeric(yearEndDate - LINE_START_DATE)<365,1,0)) # minimum observed time is 365 days.
-  
-  first_line_agg <- first_line %>% mutate(START_MONTH_YEAR = format(LINE_START_DATE, "%Y-%m-01")) %>% 
-    filter(TREATMENT_DURATION >= 340 & INVALID == 0) %>% 
-    group_by(START_MONTH_YEAR, COHORT_DEFINITION_ID) %>% 
-    summarise(P_CNT = n_distinct(SUBJECT_ID)) %>% 
-    as.data.frame()
-  write.csv(first_line_agg, file = file.path(outputFolder, "results/TreatmentPathways/adherence_1Y.csv"))
-  
+
   saveRDS(object = first_line, file = file.path(outputFolder, "tmpData/first_line.RDS"))
 
   # Duration of Treatment
@@ -301,76 +294,76 @@ extractSubResults <- function(connectionDetails,
 
   # discontinuation (DMAB) ---------------------------------------------------
   connection <- connect(connectionDetails)
-  fracture.sql <- paste("select * from (select distinct subject_id from @cohortDatabaseSchema.@cohortTable_PRESCRIPTION_EVENTS where line != 0) d,",
-                        "(select person_id, condition_concept_id, concept_name, condition_start_date from @cdmDatabaseSchema.condition_occurrence cd, @cdmDatabaseSchema.concept c",
-                        "where condition_concept_id in (select descendant_concept_id from @cdmDatabaseSchema.concept_ancestor",
-                        "where ancestor_concept_id in (4001458, 4222001, 4053828, 4013156, 4009296, 4210437, 4013613, 4129394, 4129420, 4053654))",
-                        "and condition_concept_id=concept_id) t1",
-                        "where d.subject_id=t1.person_id;")
-  fracture.sql <- SqlRender::render(sql = fracture.sql,
-                                    cdmDatabaseSchema=cdmDatabaseSchema,
-                                    cohortDatabaseSchema=cohortDatabaseSchema,
-                                    cohortTable=cohortTable)
+  # fracture.sql <- paste("select * from (select distinct subject_id from @cohortDatabaseSchema.@cohortTable_PRESCRIPTION_EVENTS where line != 0) d,",
+  #                       "(select person_id, condition_concept_id, concept_name, condition_start_date from @cdmDatabaseSchema.condition_occurrence cd, @cdmDatabaseSchema.concept c",
+  #                       "where condition_concept_id in (select descendant_concept_id from @cdmDatabaseSchema.concept_ancestor",
+  #                       "where ancestor_concept_id in (4001458, 4222001, 4053828, 4013156, 4009296, 4210437, 4013613, 4129394, 4129420, 4053654))",
+  #                       "and condition_concept_id=concept_id) t1",
+  #                       "where d.subject_id=t1.person_id;")
+  # fracture.sql <- SqlRender::render(sql = fracture.sql,
+  #                                   cdmDatabaseSchema=cdmDatabaseSchema,
+  #                                   cohortDatabaseSchema=cohortDatabaseSchema,
+  #                                   cohortTable=cohortTable)
+  # 
+  # fracture_data <- DatabaseConnector::querySql(sql = fracture.sql, connection = connection)
+  # first_fracture <-  fracture_data %>% select(SUBJECT_ID, CONDITION_START_DATE) %>% group_by(SUBJECT_ID) %>%
+  #   summarise(CONDITION_START_DATE=min(CONDITION_START_DATE)) %>% as.data.frame()
 
-  fracture_data <- DatabaseConnector::querySql(sql = fracture.sql, connection = connection)
-  first_fracture <-  fracture_data %>% select(SUBJECT_ID, CONDITION_START_DATE) %>% group_by(SUBJECT_ID) %>%
-    summarise(CONDITION_START_DATE=min(CONDITION_START_DATE)) %>% as.data.frame()
+  # # dmab_discontinuation_1 <- first_line %>% filter(COMBO==1 & TREATMENT_DISCONTINUE > 180 & COHORT_DEFINITION_ID == 1004 & INVALID==0) %>%
+  # #   mutate(OBSERVATION_END_DATE = TREATMENT_END_DATE + TREATMENT_DISCONTINUE,
+  # #          LINE=1) %>%
+  # #   select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
+  # # 
+  # # dmab_discontinuation_2 <- first_to_second %>%
+  # #   mutate(GAP_DAYS = as.numeric(LINE_START_DATE_SECOND-TREATMENT_END_DATE_FIRST)) %>%
+  # #   filter(GAP_DAYS > 180 & COHORT_DEFINITION_ID_FIRST == 1004) %>%
+  # #   mutate(OBSERVATION_END_DATE = LINE_START_DATE_SECOND,
+  # #          TREATMENT_END_DATE = TREATMENT_END_DATE_FIRST,
+  # #          TREATMENT_DURATION = TREATMENT_DURATION_FIRST,
+  # #          LINE=2) %>%
+  # #   select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
+  # # 
+  # # dmab_discontinuation <- rbind(dmab_discontinuation_1, dmab_discontinuation_2)
+  # 
+  # # dmab_fracture <- dmab_discontinuation %>% left_join(first_fracture) %>% filter(!is.na(CONDITION_START_DATE)) %>%
+  # #   mutate(DURATION = as.numeric(CONDITION_START_DATE-TREATMENT_END_DATE),
+  # #          F_VALID = ifelse(CONDITION_START_DATE<TREATMENT_END_DATE,0,
+  # #                           ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE & CONDITION_START_DATE < TREATMENT_END_DATE+180,1,
+  # #                                  ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE+180 & CONDITION_START_DATE < TREATMENT_END_DATE+270,2,3)))) %>%
+  # #   group_by(LINE, F_VALID) %>%
+  # #   summarise(INDEX = "DMAB",
+  # #           p_cnt=n_distinct(SUBJECT_ID),
+  # #           duration_median=paste0(median(DURATION), "[", quantile(DURATION)[2],"-", quantile(DURATION)[4], "]"),
+  # #           duration_mean=paste0(round(mean(DURATION),2),"(", round(sd(DURATION),2), ")"),)
+  # 
+  # # bp_discontinuation_1 <- first_line %>% filter(COMBO==1 & TREATMENT_DISCONTINUE > 365 & COHORT_DEFINITION_ID %in% c(1001,1002) & INVALID==0) %>%
+  # #   mutate(OBSERVATION_END_DATE = TREATMENT_END_DATE + TREATMENT_DISCONTINUE,
+  # #          LINE=1) %>%
+  # #   select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
+  # # 
+  # # bp_discontinuation_2 <- first_to_second %>%
+  # #   mutate(GAP_DAYS = as.numeric(LINE_START_DATE_SECOND-TREATMENT_END_DATE_FIRST)) %>%
+  # #   filter(GAP_DAYS > 365 & COHORT_DEFINITION_ID_FIRST %in% c(1001,1002)) %>%
+  # #   mutate(OBSERVATION_END_DATE = LINE_START_DATE_SECOND,
+  # #          TREATMENT_END_DATE = TREATMENT_END_DATE_FIRST,
+  # #          TREATMENT_DURATION = TREATMENT_DURATION_FIRST,
+  # #          LINE=2) %>%
+  # #   select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
+  # # 
+  # # bp_discontinuation <- rbind(bp_discontinuation_1, bp_discontinuation_2)
 
-  dmab_discontinuation_1 <- first_line %>% filter(COMBO==1 & TREATMENT_DISCONTINUE > 180 & COHORT_DEFINITION_ID == 1004 & INVALID==0) %>%
-    mutate(OBSERVATION_END_DATE = TREATMENT_END_DATE + TREATMENT_DISCONTINUE,
-           LINE=1) %>%
-    select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
-
-  dmab_discontinuation_2 <- first_to_second %>%
-    mutate(GAP_DAYS = as.numeric(LINE_START_DATE_SECOND-TREATMENT_END_DATE_FIRST)) %>%
-    filter(GAP_DAYS > 180 & COHORT_DEFINITION_ID_FIRST == 1004) %>%
-    mutate(OBSERVATION_END_DATE = LINE_START_DATE_SECOND,
-           TREATMENT_END_DATE = TREATMENT_END_DATE_FIRST,
-           TREATMENT_DURATION = TREATMENT_DURATION_FIRST,
-           LINE=2) %>%
-    select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
-
-  dmab_discontinuation <- rbind(dmab_discontinuation_1, dmab_discontinuation_2)
-
-  dmab_fracture <- dmab_discontinuation %>% left_join(first_fracture) %>% filter(!is.na(CONDITION_START_DATE)) %>%
-    mutate(DURATION = as.numeric(CONDITION_START_DATE-TREATMENT_END_DATE),
-           F_VALID = ifelse(CONDITION_START_DATE<TREATMENT_END_DATE,0,
-                            ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE & CONDITION_START_DATE < TREATMENT_END_DATE+180,1,
-                                   ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE+180 & CONDITION_START_DATE < TREATMENT_END_DATE+270,2,3)))) %>%
-    group_by(LINE, F_VALID) %>%
-    summarise(INDEX = "DMAB",
-            p_cnt=n_distinct(SUBJECT_ID),
-            duration_median=paste0(median(DURATION), "[", quantile(DURATION)[2],"-", quantile(DURATION)[4], "]"),
-            duration_mean=paste0(round(mean(DURATION),2),"(", round(sd(DURATION),2), ")"),)
-
-  bp_discontinuation_1 <- first_line %>% filter(COMBO==1 & TREATMENT_DISCONTINUE > 365 & COHORT_DEFINITION_ID %in% c(1001,1002) & INVALID==0) %>%
-    mutate(OBSERVATION_END_DATE = TREATMENT_END_DATE + TREATMENT_DISCONTINUE,
-           LINE=1) %>%
-    select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
-
-  bp_discontinuation_2 <- first_to_second %>%
-    mutate(GAP_DAYS = as.numeric(LINE_START_DATE_SECOND-TREATMENT_END_DATE_FIRST)) %>%
-    filter(GAP_DAYS > 365 & COHORT_DEFINITION_ID_FIRST %in% c(1001,1002)) %>%
-    mutate(OBSERVATION_END_DATE = LINE_START_DATE_SECOND,
-           TREATMENT_END_DATE = TREATMENT_END_DATE_FIRST,
-           TREATMENT_DURATION = TREATMENT_DURATION_FIRST,
-           LINE=2) %>%
-    select(LINE, SUBJECT_ID, TREATMENT_DURATION, TREATMENT_END_DATE, OBSERVATION_END_DATE)
-
-  bp_discontinuation <- rbind(bp_discontinuation_1, bp_discontinuation_2)
-
-  bp_fracture <- bp_discontinuation %>% left_join(first_fracture) %>% filter(!is.na(CONDITION_START_DATE)) %>%
-    mutate(DURATION = as.numeric(CONDITION_START_DATE-TREATMENT_END_DATE),
-           F_VALID = ifelse(CONDITION_START_DATE<TREATMENT_END_DATE,0,
-                            ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE & CONDITION_START_DATE < TREATMENT_END_DATE+365,1,
-                                   ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE+365 & CONDITION_START_DATE < TREATMENT_END_DATE+455,2,3)))) %>%
-    group_by(LINE, F_VALID) %>%
-    summarise(INDEX = "BP",
-            p_cnt=n_distinct(SUBJECT_ID),
-            duration_median=paste0(median(DURATION), "[", quantile(DURATION)[2],"-", quantile(DURATION)[4], "]"),
-            duration_mean=paste0(round(mean(DURATION),2),"(", round(sd(DURATION),2), ")"),)
-  fracture_agg <- rbind(dmab_fracture, bp_fracture)
-  write.csv(fracture_agg, file = file.path(outputFolder, "results/TreatmentPathways/fracture_cnt.csv"))
+  # bp_fracture <- bp_discontinuation %>% left_join(first_fracture) %>% filter(!is.na(CONDITION_START_DATE)) %>%
+  #   mutate(DURATION = as.numeric(CONDITION_START_DATE-TREATMENT_END_DATE),
+  #          F_VALID = ifelse(CONDITION_START_DATE<TREATMENT_END_DATE,0,
+  #                           ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE & CONDITION_START_DATE < TREATMENT_END_DATE+365,1,
+  #                                  ifelse(CONDITION_START_DATE >= TREATMENT_END_DATE+365 & CONDITION_START_DATE < TREATMENT_END_DATE+455,2,3)))) %>%
+  #   group_by(LINE, F_VALID) %>%
+  #   summarise(INDEX = "BP",
+  #           p_cnt=n_distinct(SUBJECT_ID),
+  #           duration_median=paste0(median(DURATION), "[", quantile(DURATION)[2],"-", quantile(DURATION)[4], "]"),
+  #           duration_mean=paste0(round(mean(DURATION),2),"(", round(sd(DURATION),2), ")"),)
+  # fracture_agg <- rbind(dmab_fracture, bp_fracture)
+  # write.csv(fracture_agg, file = file.path(outputFolder, "results/TreatmentPathways/fracture_cnt.csv"))
 
   # demographics ------------------------------------------------------------
   first_line_cohort <- first_line %>% select(COHORT_DEFINITION_ID, SUBJECT_ID, LINE_START_DATE, TREATMENT_END_DATE)
@@ -381,10 +374,10 @@ extractSubResults <- function(connectionDetails,
                                  dropTableIfExists = TRUE,
                                  createTable = TRUE)
 
-  CohortCounts <- read.csv(file.path(outputFolder, "results/TreatmentPathways/CohortCounts.csv"))
-  covariates_1  <-  FeatureExtraction::createDefaultCovariateSettings()
-
+  CohortCounts <- read.csv(file.path(outputFolder, "CohortCounts.csv"))
   
+  # pathToCsv <- system.file("settings", "Table1Specs.csv", package = "ODTP")
+  # specifications <- read.csv(pathToCsv)
   for (id in c(1001:1006)){
     valid_cohort <- length(CohortCounts[CohortCounts$cohortDefinitionId==id,]$personCount)
     if(valid_cohort==1){
@@ -396,17 +389,12 @@ extractSubResults <- function(connectionDetails,
                                                              rowIdField = "subject_id",
                                                              aggregated = TRUE,
                                                              covariateSettings = covariates_1)
-      covariateRef <- as.data.frame(covariateData_1$covariateRef)
-      covariates <- as.data.frame(covariateData_1$covariates)
-      covariates <- covariates %>% left_join(covariateRef, by = "covariateId")
-      covariateContinous <- as.data.frame(covariateData_1$covariatesContinuous)
-      covariateContinous <- covariateContinous %>% left_join(covariateRef, by = "covariateId")
-      write.csv(covariates, file.path(outputFolder, paste0("results/TreatmentPathways/covariates", id, ".csv")))
-      write.csv(covariateContinous, file.path(outputFolder, paste0("results/TreatmentPathways/covariateContinous", id, ".csv")))
+      table1 <- FeatureExtraction::createTable1(covariateData1 = covariateData_1)
+      write.csv(table1, file.path(outputFolder, paste0("results/TreatmentPathways/table1_", id, ".csv")))
       FeatureExtraction::saveCovariateData(covariateData = covariateData_1, file = file.path(outputFolder, paste0("tmpData/covariate_1_", id, ".zip")))
       
       sql <- SqlRender::loadRenderTranslateSql("customCovariates.sql",
-                                               "ODTP",
+                                               "ODTP4TMU",
                                                dbms = connectionDetails$dbms,
                                                oracleTempSchema = oracleTempSchema,
                                                cdm_database_schema = cdmDatabaseSchema,

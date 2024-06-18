@@ -1,6 +1,6 @@
 # Copyright 2020 Observational Health Data Sciences and Informatics
 #
-# This file is part of ODTP
+# This file is part of ODTP4TMU
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 #' Execute the Study
 #'
 #' @details
-#' This function executes the ODTP Study.
+#' This function executes the ODTP4TMU Study.
 #' 
 #' The \code{createCohorts}, \code{synthesizePositiveControls}, \code{runAnalyses}, and \code{runDiagnostics} arguments
 #' are intended to be used to run parts of the full study at a time, but none of the parts are considered to be optional.
@@ -79,15 +79,12 @@ execute <- function(connectionDetails,
                     databaseId = "Unknown",
                     databaseName = "Unknown",
                     databaseDescription = "Unknown",
-                    startDate = startDate,
-                    endDate = endDate,
                     createCohorts = TRUE,
                     synthesizePositiveControls = TRUE,
                     runAnalyses = TRUE,
                     packageResults = TRUE,
                     maxCores = 4,
                     minCellCount= 5) {
-  
   if (!file.exists(outputFolder))
     dir.create(outputFolder, recursive = TRUE)
   if (!file.exists(file.path(outputFolder, "results")))
@@ -98,7 +95,7 @@ execute <- function(connectionDetails,
     dir.create(file.path(outputFolder, "results/CohortMethod"))
   if (!file.exists(file.path(outputFolder, "tmpData")))
     dir.create(file.path(outputFolder, "tmpData"))
-  
+
   ParallelLogger::addDefaultFileLogger(file.path(outputFolder, "log.txt"))
   ParallelLogger::addDefaultErrorReportLogger(file.path(outputFolder, "errorReportR.txt"))
   on.exit(ParallelLogger::unregisterLogger("DEFAULT_FILE_LOGGER", silent = TRUE))
@@ -111,9 +108,7 @@ execute <- function(connectionDetails,
                   cohortDatabaseSchema = cohortDatabaseSchema,
                   cohortTable = cohortTable,
                   oracleTempSchema = oracleTempSchema,
-                  outputFolder = outputFolder,
-                  startDate = startDate,
-                  endDate = endDate)
+                  outputFolder = outputFolder)
   }
   
   # Set doPositiveControlSynthesis to FALSE if you don't want to use synthetic positive controls:
@@ -134,19 +129,14 @@ execute <- function(connectionDetails,
   if (runAnalyses) {
     ParallelLogger::logInfo("Running Treatment Pathways analyses")
     computePrescriptionNum(databaseName = databaseName,
-                           outputFolder = outputFolder,
-                           startDate = startDate,
-                           endDate = endDate)
-    
-    runPathwayAnalysis(connectionDetails = connectionDetails,
-                       cdmDatabaseSchema = cdmDatabaseSchema,
-                       cohortDatabaseSchema = cohortDatabaseSchema,
-                       cohortTable = cohortTable,
-                       oracleTempSchema = oracleTempSchema,
-                       outputFolder = outputFolder,
-                       startDate = startDate,
-                       endDate = endDate)
-    
+                           outputFolder = outputFolder)
+
+    runPathwayAnalysis(connectionDetails,
+                       cohortDatabaseSchema,
+                       cohortTable,
+                       databaseName,
+                       outputFolder)
+
     ParallelLogger::logInfo("Running CohortMethod analyses")
     runCohortMethod(connectionDetails = connectionDetails,
                     cdmDatabaseSchema = cdmDatabaseSchema,
@@ -161,11 +151,10 @@ execute <- function(connectionDetails,
     ParallelLogger::logInfo("Packaging results")
     exportResults(outputFolder = outputFolder,
                   databaseId = databaseId,
-                  databaseName = databaseId,
-                  databaseDescription = databaseId,
+                  databaseName = databaseName,
+                  databaseDescription = databaseDescription,
                   minCellCount = minCellCount,
                   maxCores = maxCores)
-
   }
   
   invisible(NULL)

@@ -1,6 +1,6 @@
 # Copyright 2020 Observational Health Data Sciences and Informatics
 #
-# This file is part of ODTP
+# This file is part of ODTP4TMU
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,9 +43,7 @@ createCohorts <- function(connectionDetails,
                           cohortDatabaseSchema,
                           cohortTable = "cohort",
                           oracleTempSchema,
-                          outputFolder,
-                          startDate = startDate,
-                          endDate = endDate) {
+                          outputFolder) {
   if (!file.exists(outputFolder))
     dir.create(outputFolder)
   
@@ -58,14 +56,14 @@ createCohorts <- function(connectionDetails,
                  oracleTempSchema = oracleTempSchema,
                  outputFolder = outputFolder)
   
-  pathToCsv <- system.file("settings", "NegativeControls.csv", package = "ODTP")
+  pathToCsv <- system.file("settings", "NegativeControls.csv", package = "ODTP4TMU")
   negativeControls <- read.csv(pathToCsv)
   
   ParallelLogger::logInfo("Creating negative control outcome cohorts")
   # Currently assuming all negative controls are outcome controls
   negativeControlOutcomes <- negativeControls
   sql <- SqlRender::loadRenderTranslateSql("NegativeControlOutcomes.sql",
-                                           "ODTP",
+                                           "ODTP4TMU",
                                            dbms = connectionDetails$dbms,
                                            oracleTempSchema = oracleTempSchema,
                                            cdm_database_schema = cdmDatabaseSchema,
@@ -77,7 +75,7 @@ createCohorts <- function(connectionDetails,
   # Check number of subjects per cohort:
   ParallelLogger::logInfo("Counting cohorts")
   sql <- SqlRender::loadRenderTranslateSql("GetCounts.sql",
-                                           "ODTP",
+                                           "ODTP4TMU",
                                            dbms = connectionDetails$dbms,
                                            oracleTempSchema = oracleTempSchema,
                                            cdm_database_schema = cdmDatabaseSchema,
@@ -86,8 +84,8 @@ createCohorts <- function(connectionDetails,
   counts <- DatabaseConnector::querySql(conn, sql)
   colnames(counts) <- SqlRender::snakeCaseToCamelCase(colnames(counts))
   counts <- addCohortNames(counts)
-  write.csv(counts, file.path(outputFolder, "results/TreatmentPathways/CohortCounts.csv"), row.names = FALSE)
-
+  write.csv(counts, file.path(outputFolder, "CohortCounts.csv"), row.names = FALSE)
+  
   # Osteoporosis Subject
   ParallelLogger::logInfo("")
   sql <- SqlRender::render(sql="select gender_concept_id, count(distinct person_id) as p_cnt from @cdm_database_schema.person group by gender_concept_id;",
@@ -95,7 +93,7 @@ createCohorts <- function(connectionDetails,
   person_whole<- DatabaseConnector::querySql(conn, sql)
   
   sql <- SqlRender::loadRenderTranslateSql("osteoporosis_person.sql",
-                                           "ODTP",
+                                           "ODTP4TMU",
                                            dbms = connectionDetails$dbms,
                                            oracleTempSchema = oracleTempSchema,
                                            vocabulary_database_schema = cdmDatabaseSchema,
@@ -105,7 +103,7 @@ createCohorts <- function(connectionDetails,
   data_whole<- DatabaseConnector::querySql(conn, sql)
   data_whole <- data_whole %>% mutate(AGE_VALIED=ifelse(AGE>=50,1,0)) %>%
     summarise(OSTEO_PERSON=n_distinct(PERSON_ID),
-            OVER_50=sum(AGE_VALIED))
+              OVER_50=sum(AGE_VALIED))
   person_osteoporosis <- data.frame(matrix(nrow=1, ncol=4))
   colnames(person_osteoporosis) <- c("WHOLE", "WOMEN", "OSTEO_WOMEN", "OVER50")
   person_osteoporosis[1,] <- c(sum(person_whole$P_CNT), person_whole[person_whole$GENDER_CONCEPT_ID==8532,]$P_CNT, data_whole$OSTEO_PERSON, data_whole$OVER_50)
@@ -115,20 +113,20 @@ createCohorts <- function(connectionDetails,
   # Prepare DOB, Gender and observation period data
   ParallelLogger::logInfo("Creating DOB, Gender, Observation Table")
   sql <- SqlRender::loadRenderTranslateSql("getDOBGender.sql",
-                                           "ODTP",
+                                           "ODTP4TMU",
                                            dbms = connectionDetails$dbms,
                                            oracleTempSchema = oracleTempSchema,
                                            cdm_database_schema = cdmDatabaseSchema,
                                            cohort_database_schema = cohortDatabaseSchema,
-                                           cohort_table = paste0(cohortTable, "_DRUG"),
-                                           yearStartDate = lubridate::year(startDate),
-                                           yearEndDate = lubridate::year(endDate))
- 
+                                           cohort_table = cohortTable,
+                                           yearStartDate = 2012,
+                                           yearEndDate = 2021)
+  
   sql <- SqlRender::translate(sql, targetDialect = attr(conn, "dbms"))
   data_whole<- DatabaseConnector::querySql(conn, sql)
   saveRDS(data_whole, file.path(outputFolder, "tmpData/DatasetCohort.RDS"))
   
-  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP")
+  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP4TMU")
   cohortsToCreate <- read.csv(pathToCsv)
   cohortsToCreate <- cohortsToCreate[cohortsToCreate$cohortType=="DRUG",]
   # Prepare data for drug cohorts
@@ -138,7 +136,7 @@ createCohorts <- function(connectionDetails,
     sql <- "SELECT * FROM @cohort_database_schema.@cohort_table WHERE cohort_definition_id = @cohortId"
     sql <- SqlRender::render(sql,
                              cohort_database_schema = cohortDatabaseSchema,
-                             cohort_table = paste0(cohortTable, "_DRUG"),
+                             cohort_table = cohortTable,
                              cohortId = i)
     sql <- SqlRender::translate(sql, targetDialect = attr(conn, "dbms"))
     data_drug <- DatabaseConnector::querySql(conn, sql)
@@ -155,13 +153,14 @@ createCohorts <- function(connectionDetails,
     saveRDS(data_drug, file.path(outputFolder, paste0("tmpData/drugCohort_", i, ".RDS")))
   }
   
+
   DatabaseConnector::disconnect(conn)
 }
 
 addCohortNames <- function(data, IdColumnName = "cohortDefinitionId", nameColumnName = "cohortName") {
-  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP")
+  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP4TMU")
   cohortsToCreate <- read.csv(pathToCsv)
-  pathToCsv <- system.file("settings", "NegativeControls.csv", package = "ODTP")
+  pathToCsv <- system.file("settings", "NegativeControls.csv", package = "ODTP4TMU")
   negativeControls <- read.csv(pathToCsv)
   
   idToName <- data.frame(cohortId = c(cohortsToCreate$cohortId,

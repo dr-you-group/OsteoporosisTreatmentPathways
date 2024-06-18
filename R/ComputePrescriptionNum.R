@@ -1,11 +1,9 @@
 #' @export
 computePrescriptionNum <- function(databaseName,
-                                   outputFolder,
-                                   startDate = StartDate,
-                                   endDate = EndDate) {
+                                   outputFolder) {
 
-  monthStartDate <- as.Date(startDate)
-  monthEndDate <- as.Date(endDate)
+  monthStartDate <- as.Date("2012-01-01")
+  monthEndDate <- as.Date("2021-12-31")
 
   tmpDir <- file.path(outputFolder, "tmpData")
 
@@ -14,7 +12,7 @@ computePrescriptionNum <- function(databaseName,
   `%>%` <- magrittr::`%>%`
   '%!in%' <- Negate('%in%')
 
-  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP")
+  pathToCsv <- system.file("settings", "CohortsToCreate.csv", package = "ODTP4TMU")
   cohortsToCreate <- read.csv(pathToCsv)
   
   ParallelLogger::logInfo("Calculating prescription numbers")

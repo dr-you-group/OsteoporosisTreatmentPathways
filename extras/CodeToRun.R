@@ -1,33 +1,30 @@
-library(ODTP)
- 
+library(ODTP4TMU)
+Sys.setlocale(category = "LC_ALL", locale = "english")
+# Optional: specify where the temporary files (used by the Andromeda package) will be created:
+options(andromedaTempFolder = "./outputFolder")
 
 # Maximum number of cores to be used:
 maxCores <- parallel::detectCores()
- 
-# The folder where the study intermediate and result files will be written:
- outputFolder <- "s:/ODTP"
- 
-# Optional: specify where the temporary files (used by the Andromeda package) will be created:
-options(andromedaTempFolder = "s:/andromeda")
- 
-# Details for connecting to the server:
- connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "pdw",
-                                                                 server = Sys.getenv("PDW_SERVER"),
-                                                                 user = NULL,
-                                                                 password = NULL,
-                                                                 port = Sys.getenv("PDW_PORT"))
- 
-# The name of the database schema where the CDM data can be found:
-cdmDatabaseSchema <- "CDM_IBM_MDCD_V1153.dbo"
- 
-# The name of the database schema and table where the study-specific cohorts will be instantiated:
-cohortDatabaseSchema <- "scratch.dbo"
-cohortTable <- "ODTP" # Please use this name!
 
+# The folder where the study intermediate and result files will be written:
+outputFolder <- "./outputFolder"
+
+# Details for connecting to the server:
+connectionDetails <- DatabaseConnector::createConnectionDetails(dbms = "",
+                                                                user = "",
+                                                                password = "",
+                                                                server = "",
+                                                                pathToDriver = "")
+
+# The name of the database schema where the CDM data can be found:
+cdmDatabaseSchema <- ""
+
+# The name of the database schema and table where the study-specific cohorts will be instantiated:
+cohortDatabaseSchema <- ""
+cohortTable <- ""
 # # Some meta-information that will be used by the export function:
-databaseId <- ""
-StartDate <- "" # The start date of CDM-transformation
-EndDate <- "" # The end date of CDM-transformation
+databaseId <- "TMU"
+# 
 # # For Oracle: define a schema that can be used to emulate temp tables:
 oracleTempSchema <- NULL
 
@@ -39,14 +36,21 @@ execute(connectionDetails = connectionDetails,
         outputFolder = outputFolder,
         databaseId = databaseId,
         databaseName = databaseId,
-        databaseDescription = databaseId,
-        startDate = StartDate,
-        endDate = EndDate,
+        databaseDescription = databaseDescription,
         createCohorts = TRUE,
-        synthesizePositiveControls = FALSE,
+        synthesizePositiveControls = TRUE,
         runAnalyses = TRUE,
         packageResults = TRUE,
         maxCores = maxCores)
 
+resultsZipFile <- file.path(outputFolder, "export", paste0("Results_", databaseId, ".zip"))
+dataFolder <- file.path(outputFolder, "shinyData")
 
-zip::zip(zipfile = paste0(databaseId, "_results.zip"), files = "results", root = outputFolder)
+# You can inspect the results if you want:
+prepareForEvidenceExplorer(resultsZipFile = resultsZipFile, dataFolder = dataFolder)
+launchEvidenceExplorer(dataFolder = dataFolder, blind = TRUE, launch.browser = FALSE)
+
+# Upload the results to the OHDSI SFTP server:
+privateKeyFileName <- ""
+userName <- ""
+uploadResults(outputFolder, privateKeyFileName, userName)

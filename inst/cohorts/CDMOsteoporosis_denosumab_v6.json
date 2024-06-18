@@ -1,0 +1,267 @@
+{
+  "ExpressionLimit": {"Type": "All"},
+  "CollapseSettings": {
+    "CollapseType": "ERA",
+    "EraPad": 0
+  },
+  "CensorWindow": {
+    "StartDate": null,
+    "EndDate": null
+  },
+  "ConceptSets": [
+    {
+      "expression": {"items": [
+        {
+          "isExcluded": false,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Valid",
+            "CONCEPT_ID": 80502,
+            "STANDARD_CONCEPT": "S",
+            "CONCEPT_CODE": "64859006",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "Osteoporosis",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "V"
+          },
+          "includeMapped": false,
+          "includeDescendants": true
+        },
+        {
+          "isExcluded": true,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Valid",
+            "CONCEPT_ID": 40480160,
+            "STANDARD_CONCEPT": "S",
+            "CONCEPT_CODE": "443165006",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "Osteoporotic fracture",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "V"
+          },
+          "includeMapped": false,
+          "includeDescendants": true
+        },
+        {
+          "isExcluded": true,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Valid",
+            "CONCEPT_ID": 42538151,
+            "STANDARD_CONCEPT": "S",
+            "CONCEPT_CODE": "739301006",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "Osteoporosis co-occurrent and due to multiple myeloma",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "V"
+          },
+          "includeMapped": false,
+          "includeDescendants": true
+        },
+        {
+          "isExcluded": true,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Valid",
+            "CONCEPT_ID": 45766159,
+            "STANDARD_CONCEPT": "S",
+            "CONCEPT_CODE": "703264005",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "Secondary osteoporosis",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "V"
+          },
+          "includeMapped": false,
+          "includeDescendants": true
+        },
+        {
+          "isExcluded": true,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Valid",
+            "CONCEPT_ID": 4002134,
+            "STANDARD_CONCEPT": "S",
+            "CONCEPT_CODE": "203437004",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "Osteoporosis in endocrine disorders",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "V"
+          },
+          "includeMapped": false,
+          "includeDescendants": true
+        },
+        {
+          "isExcluded": false,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Invalid",
+            "CONCEPT_ID": 40401864,
+            "STANDARD_CONCEPT": "N",
+            "CONCEPT_CODE": "203878009",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "[X]Other osteoporosis",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Non-Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "D"
+          },
+          "includeMapped": false,
+          "includeDescendants": false
+        },
+        {
+          "isExcluded": false,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Invalid",
+            "CONCEPT_ID": 4149785,
+            "STANDARD_CONCEPT": "N",
+            "CONCEPT_CODE": "309745002",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "Osteoporosis localized to spine",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Non-Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "U"
+          },
+          "includeMapped": false,
+          "includeDescendants": false
+        },
+        {
+          "isExcluded": false,
+          "concept": {
+            "INVALID_REASON_CAPTION": "Invalid",
+            "CONCEPT_ID": 4001645,
+            "STANDARD_CONCEPT": "N",
+            "CONCEPT_CODE": "203428004",
+            "VOCABULARY_ID": "SNOMED",
+            "CONCEPT_NAME": "Osteoporosis, unspecified",
+            "DOMAIN_ID": "Condition",
+            "STANDARD_CONCEPT_CAPTION": "Non-Standard",
+            "CONCEPT_CLASS_ID": "Clinical Finding",
+            "INVALID_REASON": "U"
+          },
+          "includeMapped": false,
+          "includeDescendants": false
+        }
+      ]},
+      "name": "[BDJ] Osteoporosis_v3",
+      "id": 16
+    },
+    {
+      "expression": {"items": [{
+        "isExcluded": false,
+        "concept": {
+          "INVALID_REASON_CAPTION": "Valid",
+          "CONCEPT_ID": 21604169,
+          "STANDARD_CONCEPT": "C",
+          "CONCEPT_CODE": "M05BX04",
+          "VOCABULARY_ID": "ATC",
+          "CONCEPT_NAME": "denosumab; parenteral",
+          "DOMAIN_ID": "Drug",
+          "STANDARD_CONCEPT_CAPTION": "Classification",
+          "CONCEPT_CLASS_ID": "ATC 5th",
+          "INVALID_REASON": "V"
+        },
+        "includeMapped": false,
+        "includeDescendants": true
+      }]},
+      "name": "[ODTP_TMU] Denosumab",
+      "id": 22
+    }
+  ],
+  "EndStrategy": {"CustomEra": {
+    "DrugCodesetId": 22,
+    "DaysSupplyOverride": null,
+    "GapDays": 180,
+    "Offset": 0
+  }},
+  "cdmVersionRange": ">=5.0.0",
+  "CensoringCriteria": [],
+  "QualifiedLimit": {"Type": "First"},
+  "InclusionRules": [{
+    "expression": {
+      "CriteriaList": [{
+        "RestrictVisit": false,
+        "StartWindow": {
+          "UseEventEnd": false,
+          "Start": {
+            "Days": null,
+            "Coeff": -1
+          },
+          "End": {
+            "Days": 0,
+            "Coeff": -1
+          },
+          "UseIndexEnd": false
+        },
+        "IgnoreObservationPeriod": false,
+        "EndWindow": null,
+        "Criteria": {"ConditionOccurrence": {
+          "OccurrenceEndDate": null,
+          "CorrelatedCriteria": null,
+          "ConditionTypeExclude": false,
+          "CodesetId": 16,
+          "ProviderSpecialty": null,
+          "Gender": null,
+          "VisitType": null,
+          "First": null,
+          "OccurrenceStartDate": null,
+          "ConditionType": null,
+          "ConditionSourceConcept": null,
+          "ConditionStatus": null,
+          "StopReason": null,
+          "Age": null
+        }},
+        "Occurrence": {
+          "Type": 2,
+          "CountColumn": null,
+          "IsDistinct": false,
+          "Count": 1
+        }
+      }],
+      "Type": "ALL",
+      "DemographicCriteriaList": [],
+      "Groups": [],
+      "Count": null
+    },
+    "name": "has a history of osteoporosis",
+    "description": null
+  }],
+  "PrimaryCriteria": {
+    "CriteriaList": [{"DrugExposure": {
+      "OccurrenceEndDate": null,
+      "CorrelatedCriteria": null,
+      "DrugSourceConcept": null,
+      "CodesetId": 22,
+      "DrugTypeExclude": false,
+      "Quantity": null,
+      "DrugType": null,
+      "ProviderSpecialty": null,
+      "EffectiveDrugDose": null,
+      "Gender": null,
+      "DaysSupply": {
+        "Op": "gte",
+        "Extent": null,
+        "Value": 1
+      },
+      "DoseUnit": null,
+      "VisitType": null,
+      "Refills": null,
+      "First": null,
+      "OccurrenceStartDate": null,
+      "RouteConcept": null,
+      "StopReason": null,
+      "LotNumber": null,
+      "Age": null
+    }}],
+    "PrimaryCriteriaLimit": {"Type": "All"},
+    "ObservationWindow": {
+      "PostDays": 0,
+      "PriorDays": 0
+    }
+  }
+}
